@@ -1,0 +1,23 @@
+{
+  "id": "2474070",
+  "name": "cms",
+  "font_family": "element-icons",
+  "css_prefix_text": "el-icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "16474493",
+      "name": "eye",
+      "font_class": "eye-close",
+      "unicode": "e606",
+      "unicode_decimal": 58886
+    },
+    {
+      "icon_id": "19603105",
+      "name": "eye",
+      "font_class": "eye-open",
+      "unicode": "e67c",
+      "unicode_decimal": 59004
+    }
+  ]
+}

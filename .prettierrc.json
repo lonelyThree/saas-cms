@@ -1,0 +1,15 @@
+{
+  "printWidth": 80,
+  "singleQuote": true,
+  "trailingComma": "es5",
+  "tabWidth": 2,
+  "semi": false,
+  "overrides": [
+    {
+      "files": ["*.js", ".json", ".scss"],
+      "options": {
+        "tabWidth": 4
+      }
+    }
+  ]
+}
