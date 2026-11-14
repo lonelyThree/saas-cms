@@ -47,6 +47,11 @@
           <el-input-number v-model="popParams.join_num" :max="255" :min="1" placeholder="1~255"></el-input-number>
         </el-form-item>
 
+        <el-form-item label="累计发奖次数上限：" prop="award_times">
+          <el-input-number v-model="popParams.award_times" :max="255" :min="1" placeholder="1~255"></el-input-number>
+          <div class="tips">1 即仅发一次奖；多次达标发奖时需先领取上一轮奖励才能继续参与</div>
+        </el-form-item>
+
         <el-form-item label="考试人次：" prop="exam_num">
         <el-input-number v-model="popParams.exam_num" :max="200000" :min="0" placeholder="0~20000"></el-input-number>
       </el-form-item>
@@ -111,6 +116,10 @@ export default {
         ],
         join_num: [
           { type: 'number', required: true, message: '请输入参与次数, 必须为数字值', trigger: 'change' },
+        ],
+
+        award_times: [
+          { type: 'number', required: true, message: '请输入累计发奖次数上限, 必须为数字值', trigger: 'change' },
         ],
 
       },

@@ -77,6 +77,12 @@
             </el-radio-group>
         </el-form-item>
 
+      <el-form-item label="限制行业类型" required>
+        <el-checkbox v-model="popParams.limit_retail_type" name="limit_retail_type" :true-label="1" :false-label="2">零售</el-checkbox>
+        <el-checkbox v-model="popParams.limit_business_type" name="limit_business_type" :true-label="1" :false-label="2">商业</el-checkbox>
+        <el-checkbox v-model="popParams.limit_clinic_type" name="limit_clinic_type" :true-label="1" :false-label="2">诊所</el-checkbox>
+      </el-form-item>
+
       <el-form-item label="活动模式：" prop="vote_type">
         <el-radio-group v-model="popParams.vote_type"  :disabled="popParams.id > 0">
           <el-radio :label="1">投票模式</el-radio>
@@ -167,7 +173,7 @@
         <el-input v-model="popParams.btn_name" max="30" style="width:600px" placeholder="报名按钮名称（20个字以内）"></el-input>
       </el-form-item>
 
-    
+
       <el-form-item label="报名开始时间：" prop="start_time">
         <el-date-picker v-model="popParams.start_time" type="datetime" format="yyyy-MM-dd HH:mm" value-format="yyyy-MM-dd HH:mm"
           placeholder="选择日期">
@@ -333,6 +339,10 @@ export default {
       }
     },
     submitForm(formName) {
+      if (this.popParams.limit_business_type != 1 && this.popParams.limit_retail_type != 1 && this.popParams.limit_clinic_type != 1) {
+        this.$message.error('请至少选择一个限制的行业类型');
+        return;
+      }
       this.$refs[formName].validate((valid, object) => {
         if (valid  && this.popParams.imgs && this.popParams.start_time <= this.popParams.end_time && this.popParams.vote_start_time <= this.popParams.vote_end_time
           && this.popParams.send_time >= this.popParams.vote_end_time

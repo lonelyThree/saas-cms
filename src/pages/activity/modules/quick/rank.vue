@@ -87,6 +87,15 @@
                 </el-button>
 
                 <el-button
+                    type="warning"
+                    class="op-btn"
+                    plain
+                    @click="downloadRank">
+                    <i class="el-icon-download"/>
+                    <span> 导出</span>
+                </el-button>
+
+                <el-button
                 type="success"
                 class="op-btn"
                 plain
@@ -383,6 +392,37 @@ export default {
         } else {
           this.$message.error(res.msg)
         }
+      })
+    },
+    // 成绩汇总导出（后端按筛选条件全量导出）
+    downloadRank() {
+      this.$http.download(API.quickExport, {...this.listQuery}).then(res => {
+        if (res.status != 200) {
+          this.$message.error('导出失败')
+          return
+        }
+        if (res.data.type == 'application/json') {
+          let reader = new FileReader();
+          reader.readAsText(res.data, "utf-8");
+          reader.onload = (e) => {
+            let parseObj = JSON.parse(reader.result);
+            this.$message.error(parseObj.msg ? parseObj.msg : '导出失败')
+          };
+          return
+        }
+        let fileName = decodeURIComponent(res.headers["content-disposition"].split("=")[1])
+        if (!res.data) {
+          this.$message.error('导出失败')
+          return
+        }
+        const file = new Blob([res.data], { type: "application/vnd.ms-excel;charset=utf-8" });
+        const url = URL.createObjectURL(file);
+        const a = document.createElement("a");
+        a.style.display = 'none'
+        a.href = url
+        a.download = fileName
+        a.click()
+        URL.revokeObjectURL(a.href)
       })
     },
     getRankList() {

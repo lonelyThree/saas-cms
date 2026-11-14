@@ -50,8 +50,8 @@
           </el-select>
         </el-form-item>
 
-        
-        
+
+
 
         <!-- <el-form-item label="活动开始时间">
           <el-date-picker
@@ -120,17 +120,18 @@
         <span v-else-if="item.key=='date'">{{ scope.row['start_time'] | filter2dateHi}}到{{ scope.row['end_time']  | filter2dateHi}}</span>
         <span v-else-if="item.key=='vote_date'">{{ scope.row['vote_start_time'] | filter2dateHi}}到{{ scope.row['vote_end_time']  | filter2dateHi}}</span>
         <span v-else-if="item.key=='limit_money'">{{ scope.row.limit_money }} / {{  (scope.row.award_type != 1  || scope.row.receive_date == currentDate)? scope.row.receive_money :0 }}</span>
-        
+
         <span v-else-if="item.key=='time' && scope.row.update_at">{{ scope.row.update_at * 1000, 3 | dateFormat}}</span>
 
             <span v-else-if="item.key=='time'">{{ scope.row.create_at * 1000, 3 | dateFormat}}</span>
             <span v-else-if="item.key == 'award_type'">{{ scope.row[item.key] == 2 ? '积分' :(scope.row[item.key] == 3 ? '星币' :'现金' )}}</span>
             <span v-else-if="item.key == 'auth_type'">{{ scope.row[item.key] == 2 ? '不需要'  :'需要' }}</span>
+        <span v-else-if="item.key == 'business_type'">{{ getBusinessTypeText(scope.row) }}</span>
         <el-button
                       size="mini"
                       icon="el-icon-document-copy"
                       @click="handleCopy(scope.row.link, $event)"
-                      v-else-if="item.key=='link'" 
+                      v-else-if="item.key=='link'"
                     >
                       复制
     </el-button>
@@ -138,7 +139,7 @@
                         size="mini"
                         icon="el-icon-document-copy"
                         @click="handleCopy(scope.row.vote_url, $event)"
-                        v-else-if="item.key == 'vote_url'" 
+                        v-else-if="item.key == 'vote_url'"
                       >
                         复制
       </el-button>
@@ -152,7 +153,7 @@
         :width="200"
       >
         <template slot-scope="{row}">
- 
+
           <el-button
             type="danger"
             class="op-btn"
@@ -364,6 +365,8 @@ export default {
         // { label: '视频地址', key: 'vote_url' },
         // { label: '活动限额(分)', key: 'limit_money' },
 
+        { label: '行业限制', key: 'business_type' },
+
         // { label: '提示图片', key: 'tip_img', width: '100px' },
         // { label: '视频封面', key: 'vote_cover_url', width: '100px' },
         // { label: '参与人数', key: 'joinCnt' },
@@ -373,7 +376,7 @@ export default {
         { label: '活动地址', key: 'link' },
         { label: '更新时间', key: 'time' },
       ],
-      
+
       fileList:[],
       fileTipList:[],
       listLoading:false,
@@ -504,7 +507,7 @@ export default {
       this.askRankName = row.title
       this.placeName = this.placeMap[row.place_id]?this.placeMap[row.place_id]:'渠道'
       this.showType = 3
-      
+
     },
     statusClick(row, status, tip) {
       this.$confirm('此操作将'+tip+'活动, 是否继续?', '提示', {
@@ -531,10 +534,10 @@ export default {
         this.$message({
           type: 'info',
           message: '已取消'
-        });          
+        });
       });
-        
-        
+
+
     },
     BackList() {
       console.log("BackList", "BackList[[[]]]")
@@ -580,19 +583,19 @@ export default {
         }
       })
     },
-    
+
     searchForm(){
       this.listQuery.page = 1
       this.getTabList()
     },
-    
+
 
     getTabList(){
       let date = new Date()
       this.currentDate = date.getFullYear() * 10000 + (date.getMonth() + 1)*100 + date.getDate()
       if (this.searchTime && this.searchTime.length == 2) {
         this.listQuery.startTime = this.searchTime[0] / 1000
-        this.listQuery.endTime = this.searchTime[1] / 1000 
+        this.listQuery.endTime = this.searchTime[1] / 1000
       }
       this.listLoading = true
       this.$http.get(API.voteList,{...this.listQuery}).then(res => {
@@ -606,10 +609,25 @@ export default {
         }
       })
     },
-   
+
      handleCurrentChange(page){
       this.listQuery.page = page
       this.getTabList()
+    },
+
+    getBusinessTypeText(row) {
+      const types = [];
+      // 使用 == 保持与原代码一致的类型比较行为，虽然推荐 ===，但此处为了最小化改动风险保留原意
+      if (row.limit_retail_type == 1) {
+        types.push('零售');
+      }
+      if (row.limit_business_type == 1) {
+        types.push('商业');
+      }
+      if (row.limit_clinic_type == 1) {
+        types.push('诊所');
+      }
+      return types.join('、');
     },
   }
 }
@@ -628,12 +646,12 @@ export default {
       list-style: disc; margin-left:20px;
       li{ line-height: 26px; font-size:12px;}
     }
-  }  
+  }
   .place-wrap{
     .flex-form{
        .el-form-item__content{display: flex !important;}
     }
-   
+
   }
-  
+
 </style>

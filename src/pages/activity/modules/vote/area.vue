@@ -43,7 +43,7 @@ export default {
             selectList:[]
         };
     },
-    created() { 
+    created() {
         this.getArea()
     },
     watch: {
@@ -61,7 +61,7 @@ export default {
 
         },
         getArea() {
-            this.$http.get(API.articleArea+"?id="+ this.popId).then(res => {
+            this.$http.get(API.voteArea+"?id="+ this.popId).then(res => {
                 if (res.code === 200) {
                     this.selectList = res.data.trim(',').split(',')
                     this.listLoading = false
@@ -101,8 +101,8 @@ export default {
                 }
             })
 
-            this.$http.post(API.articleAreaSave, {'id':this.popId, 'area':area}).then(res => {
-                console.log(res)
+            this.$http.post(API.voteAreaSave, {'id':this.popId, 'area':area}).then(res => {
+                // console.log(res)
                 if (res.code === 200) {
                     this.$message.success('保存成功')
                     setTimeout(() => {

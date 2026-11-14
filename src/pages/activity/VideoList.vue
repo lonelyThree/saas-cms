@@ -384,7 +384,8 @@ export default {
     addClick() {
         this.popTitle = "添加【看视频】活动"
         this.popParams = {
-          award_type:1
+          award_type:1,
+          award_times:1
         }
         this.fileList=[]
         this.fileTipList = []
@@ -405,6 +406,7 @@ export default {
     editClick(row) {
         this.popTitle = "编辑【看视频】活动【"+(this.placeMap[row.place_id]?this.placeMap[row.place_id]:'渠道')+"】【"+row.title+"】"
         this.popParams = row
+        this.popParams.award_times = row.award_times || 1 // 存量活动默认仅发一次
         this.popParams.start_date = row.start_date+""
         this.popParams.end_date = row.end_date+""
         this.fileList=[]

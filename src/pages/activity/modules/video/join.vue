@@ -80,7 +80,7 @@
           <img width="60" :src="scope.row.avatar" alt="pic" v-if="item.key == 'avatar'" />
           <span v-else-if="item.key == 'answer_at' ">{{ scope.row[item.key] * 1000, 3 |
             dateFormat }}</span>
-            <span v-else-if="item.key == 'status' ">{{ scope.row.is_award ==3 ?'已领取':(scope.row.is_award == 1 ? '待领取':'未中奖')}}</span>
+            <span v-else-if="item.key == 'status' ">{{ scope.row.is_award ==3 ?'已领取':(scope.row.is_award == 5 ?'已领取(可继续)':(scope.row.is_award == 1 || scope.row.is_award == 4 ? '待领取':'未中奖'))}}</span>
           <span v-else>{{ scope.row[item.key] }}</span>
         </template>
       </el-table-column>

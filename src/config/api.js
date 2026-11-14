@@ -1,5 +1,5 @@
 var configObj = {
-    local: { 
+    local: {
         domain: 'http://localhost:8888/Admin/',
     },
     dev: {
@@ -62,6 +62,7 @@ var API = {
     quickQuestionList: domain + 'QuickQuestionList',
     quickQuestionSave: domain + 'QuickQuestionSave',
     quickQuestionImport: domain + 'QuickQuestionImport',
+    quickExport: domain + 'QuickExport',
 
     quickSave: domain + 'QuickSave',
     quickStatus: domain + 'QuickStatus',
@@ -117,7 +118,7 @@ var API = {
     receiptWarehouseIn: domain + 'ReceiptWarehouseIn',
     receiptEditTime: domain + 'ReceiptEditTime',
 
-    
+
     watchVideoList: domain + 'WatchVideoList',
     watchVideoSave: domain + 'WatchVideoSave',
     watchVideoArea: domain + 'WatchVideoArea',
@@ -127,6 +128,7 @@ var API = {
 
     watchVideoTopicList: domain + 'WatchVideoTopicList',
     watchVideoTopicSave: domain + 'WatchVideoTopicSave',
+    watchVideoTopicImport: domain + 'WatchVideoTopicImport',
     watchVideoTopicStatus: domain + 'WatchVideoTopicStatus',
     watchVideoJoins: domain + 'WatchVideoJoins',
 
@@ -183,6 +185,7 @@ var API = {
 
     courseTopicList: domain + 'CourseTopicList',
     courseTopicSave: domain + 'CourseTopicSave',
+    courseTopicImport: domain + 'CourseTopicImport',
     courseQuestionJoins: domain + 'CourseQuestionJoins',
     courseVideoList: domain + 'CourseVideoList',
     courseVideoSave: domain + 'CourseVideoSave',
@@ -212,11 +215,9 @@ var API = {
     voteArea: domain + 'VoteArea',
     voteAreaSave: domain + 'VoteAreaSave',
     voteStatus: domain + 'VoteStatus',
-    articleUserList: domain + 'ArticleUserList',
-    articleUserLog: domain + 'ArticleUserLog',
-    articleUserExport: domain + 'ArticleUserExport',
 
     voteTopicList: domain + 'VoteTopicList',
+    voteUserExport: domain + 'VoteUserExport',
     voteTopicSave: domain + 'VoteTopicSave',
     voteTopicStatus: domain + 'VoteTopicStatus',
 
@@ -289,7 +290,7 @@ var API = {
     // roleBindPermission: domain + 'roleBindPermission', // 保存权限
 
     // // =====
-    
+
     // getOrderList: domain + 'getOrderList',
     // orderDetail: domain + 'orderDetail',
     // setOrderStatus: domain + 'setOrderStatus', //设置订单状态
