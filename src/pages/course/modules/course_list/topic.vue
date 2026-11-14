@@ -76,6 +76,15 @@
                       <i class="el-icon-search"/>
                       <span> 添加</span>
                   </el-button>
+
+                <el-button
+                  type="success"
+                  class="op-btn"
+                  plain
+                  @click="batchImport()"
+              >
+                  批量导入
+            </el-button>
             </el-form-item>
 
         </el-form>
@@ -242,6 +251,53 @@
                   </el-form-item>
               </el-form>
           </el-dialog>
+
+        <el-dialog
+        width="900px"
+        title="批量导入"
+        :visible.sync="showImportDialog"
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+        @close="closeImportForm"
+      >
+        <el-form
+          :model="importForm"
+          ref="importForm"
+          label-width="140px"
+        >
+          <el-form-item label="上传文件" prop="name">
+            <el-upload
+              ref="upload"
+              action="#"
+              accept="*.xls"
+              :limit="1"
+              :multiple="false"
+              :before-upload="beforeUpload"
+              :auto-upload="false"
+              :file-list="fileList"
+              :on-exceed="handleExceed"
+              :on-change="handleChange"
+              :on-remove="handleRemove"
+            >
+              <el-button size="small" type="primary">点击上传</el-button>
+            </el-upload>
+          </el-form-item>
+          <el-form-item label="模板格式">
+            <span class="tips" style="margin-right:10px">列：序号 | 题目 | 选项A~E | 题目类型 | 正确答案（多选答案逗号分隔，如 A,C）</span>
+            <el-button size="small" @click="downloadTemplate">下载模板</el-button>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="closeImportForm">取 消</el-button>
+          <el-button
+            type="primary"
+            :loading="importFormSubmitLoading"
+            @click="submitImportForm"
+          >
+            确 定
+          </el-button>
+        </div>
+      </el-dialog>
     </div>
 
 </template>
@@ -338,6 +394,11 @@ export default {
       },
       openLoading: false,
 
+      showImportDialog:false,
+      importFormSubmitLoading: false,
+      fileList:[],
+      importForm:{},
+
 
     };
   },
@@ -387,6 +448,82 @@ export default {
     handleCurrentChange(page){
       this.listQuery.page = page
       this.getQuestionList()
+    },
+    // 文件状态改变时的钩子
+    handleChange(file, fileList) {
+      this.fileList.push(file.raw)
+    },
+    // 文件超出个数限制时的钩子
+    handleExceed(file, fileList) {
+      return this.$message.warning('一次只能上传一个文件哦~')
+    },
+    // 文件列表移除文件时的钩子
+    handleRemove(file, fileList) {
+      this.fileList = fileList
+    },
+    beforeUpload(file) {
+      const isText = file.type === 'application/vnd.ms-excel'
+      const isTextComputer =
+        file.type ===
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      if (!isText && !isTextComputer) {
+        this.$message.warning('请上传excel格式文件！')
+      }
+      return isText || isTextComputer
+    },
+    batchImport() {
+      this.showImportDialog = true
+    },
+    // 下载题目导入模板（与后端 9 列模板解析规则一致）
+    downloadTemplate() {
+      const header = '序号,题目,选项 A,选项 B,选项 C,选项 D,选项 E,题目类型,正确答案\n'
+      const example = '1,示例题目-可删除后从2开始连续编号,选项一,选项二,选项三,,,单选,A\n2,示例多选题,选项一,选项二,选项三,,,多选,"A,C"\n3,示例判断题,正确,错误,,,,判断,A\n'
+      // \ufeff BOM 保证 Excel 打开不乱码
+      const blob = new Blob(['\ufeff' + header + example], { type: 'application/vnd.ms-excel;charset=utf-8' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.style.display = 'none'
+      a.href = url
+      a.download = '试卷题目导入模板.csv'
+      a.click()
+      URL.revokeObjectURL(url)
+    },
+    submitImportForm() {
+      if (this.fileList.length === 0) {
+        return this.$message.warning('请先选择要上传的文件');
+      }
+      let file = this.fileList[0]
+      let extension = file.name.substring(file.name.lastIndexOf('.') + 1);
+      let size = file.size / 1024 / 1024;
+      if (extension !== 'xlsx' && extension !== 'xls') {
+        this.$message.warning('只能上传后缀是.xlsx或者.xls的文件');
+        return
+      }
+      if (size > 10) {
+        this.$message.warning('文件大小不得超过10M');
+        return
+      }
+
+      var formData = new FormData()
+      formData.append('file', this.fileList[0])
+      formData.append('question_id', this.popParams.id)
+      this.importFormSubmitLoading = true
+      this.$http.post(API.courseTopicImport, formData)
+        .then(res => {
+          this.importFormSubmitLoading = false
+          if (res.code === 200) {
+            this.$message.success('导入成功')
+            this.closeImportForm()
+            this.getQuestionList()
+          } else {
+            this.$message.error(res.msg)
+          }
+        })
+    },
+    closeImportForm() {
+      this.showImportDialog = false
+      this.$refs.importForm.resetFields()
+      this.fileList = []
     },
     getQuestionList() {
       this.listLoading = true

@@ -117,6 +117,8 @@
             <span v-if="item.key=='time' && scope.row.update_at">{{ scope.row.update_at * 1000, 3 | dateFormat}}</span>
 
             <span v-else-if="item.key=='time' ">{{ scope.row.create_at * 1000, 3 | dateFormat}}</span>
+
+            <span v-else-if="item.key == 'type'">{{ scope.row[item.key] == 2 ? '多选' : (scope.row[item.key] == 3 ? '判断' : '单选') }}</span>
     
             <span v-else>{{ scope.row[item.key] }}</span>
         </template>
@@ -170,22 +172,30 @@
                     <el-form-item label="问题名称：" prop="name">
                         <el-input v-model="popParams.name" style="width:600px" placeholder="请输入问题名称"></el-input>
                     </el-form-item>
+                    <el-form-item label="题目类型：" prop="type">
+                        <el-radio-group v-model="popParams.type">
+                            <el-radio :label="1">单选</el-radio>
+                            <el-radio :label="2">多选</el-radio>
+                            <el-radio :label="3">判断</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
                     <el-form-item label="答案A：" prop="a">
                         <el-input v-model="popParams.a" style="width:600px" placeholder="请输入答案A"></el-input>
                     </el-form-item>
                     <el-form-item label="答案B：" prop="b">
                         <el-input v-model="popParams.b" style="width:600px" placeholder="请输入答B"></el-input>
                     </el-form-item>
-                    <el-form-item label="答案C：" prop="c">
+                    <el-form-item label="答案C：" prop="c" v-if="popParams.type != 3">
                         <el-input v-model="popParams.c" style="width:600px" placeholder="请输入答案C"></el-input>
                     </el-form-item>
-                    <el-form-item label="答案D：" prop="d">
+                    <el-form-item label="答案D：" prop="d" v-if="popParams.type != 3">
                         <el-input v-model="popParams.d" style="width:600px" placeholder="请输入答案D"></el-input>
                     </el-form-item>
-                    <el-form-item label="答案E：" prop="e">
+                    <el-form-item label="答案E：" prop="e" v-if="popParams.type != 3">
                         <el-input v-model="popParams.e" style="width:600px" placeholder="请输入答案E"></el-input>
                     </el-form-item>
-                    <el-form-item label="正确答案：" prop="correct">
+                    <el-form-item label="正确答案：" prop="correct"
+                        v-if="popParams.type == 1">
                         <el-radio-group
                             v-model="popParams.correct"
                         >
@@ -195,6 +205,24 @@
                             <el-radio label="D">D</el-radio>
                             <el-radio label="E">E</el-radio>
                         </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="正确答案：" prop="correct"
+                        v-else-if="popParams.type == 3">
+                        <el-radio-group
+                            v-model="popParams.correct"
+                        >
+                            <el-radio label="A">A</el-radio>
+                            <el-radio label="B">B</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="正确答案：" prop="checkList" v-else>
+                        <el-checkbox-group v-model="popParams.checkList">
+                            <el-checkbox label="A">A</el-checkbox>
+                            <el-checkbox label="B">B</el-checkbox>
+                            <el-checkbox label="C">C</el-checkbox>
+                            <el-checkbox label="D">D</el-checkbox>
+                            <el-checkbox label="E">E</el-checkbox>
+                        </el-checkbox-group>
                     </el-form-item>
 
                     <el-form-item label="">
@@ -234,6 +262,10 @@
               <el-button size="small" type="primary">点击上传</el-button>
             </el-upload>
           </el-form-item>
+          <el-form-item label="模板格式">
+            <span class="tips" style="margin-right:10px">列：序号 | 题目 | 选项A~E | 题目类型 | 正确答案（多选答案逗号分隔，如 A,C）</span>
+            <el-button size="small" @click="downloadTemplate">下载模板</el-button>
+          </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="closeImportForm">取 消</el-button>
@@ -269,6 +301,7 @@ export default {
 
         { label: '编号', key: 'index' },
         { label: '名称', key: 'name' },
+        { label: '类型', key: 'type' },
         { label: '答案A', key: 'a' },
         { label: '答案B', key: 'b' },
         { label: '答案C', key: 'c' },
@@ -299,13 +332,15 @@ export default {
       showPopFlag: false,
       popPopTitle: '',
       popParams: {
+        type: 1,
         a: '',
         name: '',
         b: '',
         c: '',
         d: '',
         e: '',
-        correct: ''
+        correct: '',
+        checkList: []
       },
       loading: false,
       rules: {
@@ -326,6 +361,9 @@ export default {
 
         correct: [
           { required: true, message: '请输入选择正确的答案', trigger: 'change' }
+        ],
+        checkList: [
+          { type: 'array', required: true, message: '请选择正确的答案', trigger: 'change' }
         ],
       },
       showImportDialog:false,
@@ -360,12 +398,21 @@ export default {
 
 
     addClick() {
-      this.popParams = {}
+      this.popParams = {
+        type: 1,
+        checkList: []
+      }
       this.popPopTitle = '添加问题'
       this.showPopFlag = true
     },
     editClick(row) {
       this.popParams = row
+      if (row.type == 2) {
+        // 多选：回显已存答案，correct 提交时重新拼接
+        this.popParams.checkList = row.correct ? row.correct.split(',') : []
+      } else {
+        this.popParams.checkList = []
+      }
       this.popPopTitle = '编辑问题'
       this.showPopFlag = true
     },
@@ -397,6 +444,26 @@ export default {
       this.$refs[formName].validate((valid, object) => {
         if (valid) {
           // console.log(this.popParams)
+          if (this.popParams.type == 2) {
+            let checkList = this.popParams.checkList || []
+            checkList = checkList.filter(index => (index == 'A' || index == 'B' || index == 'C' || index == 'D' || index == 'E'))
+            checkList.sort(function(a, b) {
+              return a < b ? -1 : 1
+            })
+            this.popParams.checkList = checkList
+            if (checkList.length < 2) {
+              this.$message.error("题目为多选， 请至少选择两个答案")
+              return false;
+            }
+            this.popParams.correct = checkList.join(',')
+          }
+
+          if (this.popParams.type == 3 && this.popParams.correct != 'A' && this.popParams.correct != 'B') {
+            this.$message.error("判断题答案必须是A或者B")
+            return false;
+          }
+
+          if (this.popParams.type != 3) {
           if (this.popParams.d && this.popParams.d != "" && !this.popParams.c) {
             this.$message.error("请按照顺序补充答案C")
             return false;
@@ -419,6 +486,7 @@ export default {
           if (this.popParams.correct == 'E' && !this.popParams.e) {
             this.$message.error("正确答案为E， 请补充答案E的内容")
             return false;
+          }
           }
 
 
@@ -452,6 +520,20 @@ export default {
     },
     batchImport() {
       this.showImportDialog = true
+    },
+    // 下载题目导入模板（与后端 9 列模板解析规则一致）
+    downloadTemplate() {
+      const header = '序号,题目,选项 A,选项 B,选项 C,选项 D,选项 E,题目类型,正确答案\n'
+      const example = '1,示例题目-可删除后从2开始连续编号,选项一,选项二,选项三,,,单选,A\n2,示例多选题,选项一,选项二,选项三,,,多选,"A,C"\n3,示例判断题,正确,错误,,,,判断,A\n'
+      // \ufeff BOM 保证 Excel 打开不乱码
+      const blob = new Blob(['\ufeff' + header + example], { type: 'application/vnd.ms-excel;charset=utf-8' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.style.display = 'none'
+      a.href = url
+      a.download = '快问快答题目导入模板.csv'
+      a.click()
+      URL.revokeObjectURL(url)
     },
     submitImportForm() {
        // 如果上传的文件列表是空的，给出提示

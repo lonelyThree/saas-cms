@@ -62,13 +62,13 @@
             <span> 搜索</span>
           </el-button>
 
-          <!-- <el-button
+         <el-button
                     type="warning"
                     align="right"
                     @click="download">
                     <i class="el-icon-download"/>
                     <span> 导出</span>
-                </el-button> -->
+                </el-button> 
         </el-form-item>
 
       </el-form>

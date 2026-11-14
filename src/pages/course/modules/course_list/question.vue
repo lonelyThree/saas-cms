@@ -279,6 +279,7 @@ export default {
         this.subPopTitle = "添加"+this.popTitle+"试卷"
         this.subPopParams = {
           difficulty_type:1,
+          award_times:1,
           place_id:this.popParams.place_id,
           course_id:this.popParams.id
 
@@ -293,6 +294,7 @@ export default {
     editClick(row) {
         this.subPopTitle = "编辑"+this.popTitle+"【"+row.name+"】"
         this.subPopParams = row
+        this.subPopParams.award_times = row.award_times || 1 // 存量试卷默认仅发一次
         this.showType = 2
     },
     showTopicClick(row) {

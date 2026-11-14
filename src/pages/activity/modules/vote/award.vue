@@ -254,6 +254,15 @@ export default {
             return false;
           }
 
+          // 票数奖全局只允许一个（后端结算规则：票数奖只有一个）
+          if (this.popParams.send_type == 3 && !this.popParams.id) {
+            let hasVoteAward = (this.tabList || []).some(item => item.send_type == 3)
+            if (hasVoteAward) {
+              this.$message.error("票数奖只能配置一个，请勿重复添加")
+              return false;
+            }
+          }
+
           
 
           this.loading = true
