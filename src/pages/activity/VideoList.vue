@@ -124,7 +124,7 @@
 
             <span v-else-if="item.key=='time'">{{ scope.row.create_at * 1000, 3 | dateFormat}}</span>
             <span v-else-if="item.key == 'award_type'">{{ scope.row[item.key] == 2 ? '积分' :(scope.row[item.key] == 3 ? '星币' :'现金' )}}</span>
-            <span v-else-if="item.key == 'auth_type'">{{ scope.row[item.key] == 2 ? '不需要'  :'需要' }}</span>
+            <span v-else-if="item.key == 'auth_type'">{{ scope.row[item.key] == 4 ? '仅手机验证' : (scope.row[item.key] == 3 ? '仅微信授权' : (scope.row[item.key] == 2 ? '不认证' : '认证')) }}</span>
         <el-button
                       size="mini"
                       icon="el-icon-document-copy"

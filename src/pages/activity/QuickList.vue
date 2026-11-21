@@ -110,7 +110,7 @@
           {{placeMap[scope.row['place_id']]?placeMap[scope.row['place_id']]:'渠道'}}
         </span>
         <span v-else-if="item.key=='status'">{{ scope.row[item.key]==1? '上线':(scope.row[item.key]==2? '草稿':'下架')}}</span>
-        <span v-else-if="item.key == 'auth_type'">{{ scope.row[item.key] == 2 ? '不需要'  :'需要' }}</span>
+        <span v-else-if="item.key == 'auth_type'">{{ scope.row[item.key] == 4 ? '仅手机验证' : (scope.row[item.key] == 3 ? '仅微信授权' : (scope.row[item.key] == 2 ? '不认证' : '认证')) }}</span>
         <span v-else-if="item.key=='day'">{{ scope.row['day_cnt']}}/{{ scope.row['day_num']}}</span>
         <span v-else-if="item.key=='start_time'">{{ scope.row['start_time'] * 1000, 1 | dateFormat}}</span>
 
