@@ -38,6 +38,7 @@
         <el-radio-group v-model=" popParams.auth_type">
           <el-radio :label="1">认证</el-radio>
           <el-radio :label="2">不认证</el-radio>
+          <el-radio :label="3">仅微信授权</el-radio><el-radio :label="4">仅手机验证</el-radio>
         </el-radio-group>
       </el-form-item>
 
@@ -105,7 +106,7 @@
             </el-radio-group>
         </el-form-item>
 
-        <el-form-item label="限制行业类型" required>
+        <el-form-item label="限制行业类型" v-if="popParams.auth_type == 1">
           <el-checkbox v-model="popParams.limit_retail_type" name="limit_retail_type" :true-label="1" :false-label="2">零售</el-checkbox>
           <el-checkbox v-model="popParams.limit_business_type" name="limit_business_type" :true-label="1" :false-label="2">商业</el-checkbox>
           <el-checkbox v-model="popParams.limit_clinic_type" name="limit_clinic_type" :true-label="1" :false-label="2">诊所</el-checkbox>
@@ -303,7 +304,7 @@ export default {
       this.popParams[obj.name] = obj.url
     },
     submitForm(formName) {
-      if (this.popParams.limit_business_type != 1 && this.popParams.limit_retail_type != 1 && this.popParams.limit_clinic_type != 1) {
+      if (this.popParams.auth_type == 1 && this.popParams.limit_business_type != 1 && this.popParams.limit_retail_type != 1 && this.popParams.limit_clinic_type != 1) {
         this.$message.error('请至少选择一个限制的行业类型');
         return;
       }
