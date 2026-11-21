@@ -173,7 +173,7 @@
                         <el-input v-model="popParams.name" style="width:600px" placeholder="请输入问题名称"></el-input>
                     </el-form-item>
                     <el-form-item label="题目类型：" prop="type">
-                        <el-radio-group v-model="popParams.type">
+                        <el-radio-group v-model="popParams.type" @change="typeChange">
                             <el-radio :label="1">单选</el-radio>
                             <el-radio :label="2">多选</el-radio>
                             <el-radio :label="3">判断</el-radio>
@@ -400,19 +400,23 @@ export default {
     addClick() {
       this.popParams = {
         type: 1,
+        correct: '',
         checkList: []
       }
       this.popPopTitle = '添加问题'
       this.showPopFlag = true
     },
+    typeChange() {
+      // 题型切换后原答案格式可能不兼容（如多选"A,C"切回单选），统一清空让用户重选
+      this.popParams.correct = ''
+      this.popParams.checkList = []
+    },
     editClick(row) {
-      this.popParams = row
-      if (row.type == 2) {
-        // 多选：回显已存答案，correct 提交时重新拼接
-        this.popParams.checkList = row.correct ? row.correct.split(',') : []
-      } else {
-        this.popParams.checkList = []
-      }
+      // 整体替换为新对象：避免直接引用表格行导致新增 checkList 无法响应、以及编辑弹窗污染列表数据
+      const checkList = row.type == 2 && row.correct
+        ? row.correct.split(',').map(s => s.trim()).filter(Boolean)
+        : []
+      this.popParams = { ...row, checkList }
       this.popPopTitle = '编辑问题'
       this.showPopFlag = true
     },
