@@ -1,10 +1,10 @@
 <template>
-  <div class="place-wrap" v-if="showType == 1" >
+  <div class="place-wrap cms-list-page" v-if="showType == 1" >
     <el-breadcrumb separator-class="el-icon-arrow-right"  >
       <el-breadcrumb-item>分类列表</el-breadcrumb-item>
     </el-breadcrumb>
     <el-divider></el-divider>
-    <el-card class="box-card" shadow="never">
+    <el-card class="box-card cms-list-filter-card" shadow="never">
         <el-form ref="listQuery"
                :model="listQuery"
                class="form-container"
@@ -37,27 +37,24 @@
             placeholder="请输入分类名称"/>
         </el-form-item>
 
-        <el-form-item label="分类状态">
-          <el-select
-            v-model="listQuery.status"
-            clearable
-            filterable
-            placeholder="请选择分类状态">
-            <el-option v-for="item in statusList"
-                       :key="item.value"
-                       :label="item.name"
-                       :value="item.value"/>
-          </el-select>
-        </el-form-item>
+        <div class="cms-search-more" v-show="searchExpanded">
+          <el-form-item label="分类状态">
+            <el-select
+              v-model="listQuery.status"
+              clearable
+              filterable
+              placeholder="请选择分类状态">
+              <el-option v-for="item in statusList"
+                         :key="item.value"
+                         :label="item.name"
+                         :value="item.value"/>
+            </el-select>
+          </el-form-item>
+        </div>
 
-        
-        
-
-
-        <el-form-item>
+        <el-form-item class="cms-search-actions">
           <el-button
             type="primary"
-            align="right"
             @click="searchForm">
             <i class="el-icon-search"/>
             <span> 搜索</span>
@@ -68,18 +65,26 @@
             type="primary">
             添加
           </el-button>
+          <el-button
+            type="text"
+            class="cms-search-toggle"
+            @click="searchExpanded = !searchExpanded">
+            {{ searchExpanded ? '收起' : '展开' }}
+            <i :class="searchExpanded ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+          </el-button>
         </el-form-item>
 
       </el-form>
     </el-card>
 
+    <div class="cms-list-table-card">
     <el-table
       v-loading="listLoading"
       :data="tabList"
       border
       fit
       highlight-current-row
-      :style="{'width': '100%', 'margin-top': '15px'}"
+      :style="{'width': '100%'}"
     >
       <el-table-column
         v-for="(item, index) in tableConfig"
@@ -178,6 +183,7 @@
       layout="prev, pager, next, jumper, ->, sizes, total"
       @current-change="handleCurrentChange"
     />
+    </div>
   </div>
     <courseCategoryEdit
            @backList="BackList"
@@ -205,6 +211,7 @@ export default {
   data(){
     return {
       showType:1, // 1 列表  2 添加/编辑活动 
+      searchExpanded: false,
 
       record:false,
       recipe:false,

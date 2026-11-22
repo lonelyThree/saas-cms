@@ -1,10 +1,10 @@
 <template>
-  <div class="place-wrap" v-if="showType == 1">
+  <div class="place-wrap cms-list-page" v-if="showType == 1">
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item>渠道管理</el-breadcrumb-item>
     </el-breadcrumb>
     <el-divider></el-divider>
-    <el-card class="box-card" shadow="never">
+    <el-card class="box-card cms-list-filter-card" shadow="never">
         <el-form
         ref="listQuery"
         :model="listQuery"
@@ -17,7 +17,6 @@
           <el-input
             v-model="listQuery.name"
             clearable
-            style="width: 200px;"
             class="filter-item"
             placeholder="请输入渠道名称"
           />
@@ -28,15 +27,13 @@
           <el-input
             v-model="listQuery.place"
             clearable
-            style="width: 200px;"
             class="filter-item"
             placeholder="请输入渠道号"
           />
         </el-form-item>
-        <el-form-item>
+        <el-form-item class="cms-search-actions">
            <el-button
             type="primary"
-            align="right"
             @click="searchForm"
           >
             <i class="el-icon-search" />
@@ -49,13 +46,14 @@
         </el-form>
     </el-card>
 
+    <div class="cms-list-table-card">
     <el-table
       v-loading="listLoading"
       :data="tabList"
       border
       fit
       highlight-current-row
-      :style="{'width': '100%', 'margin-top': '15px'}"
+      :style="{'width': '100%'}"
     >
       <el-table-column
         v-for="(item, index) in tableConfig"
@@ -121,6 +119,7 @@
       limit.sync="10"
       @current-change="handleCurrentChange"
     />
+    </div>
   </div>
       <placeEdit
                @backList="BackList"

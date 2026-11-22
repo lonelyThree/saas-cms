@@ -77,10 +77,10 @@ export default {
 .screenfull-svg {
   display: inline-block;
   cursor: pointer;
-  fill: #fff;
-  width: 26px;
-  height: 26px;
-  vertical-align: 10px;
+  fill: var(--cms-text-sub, #666);
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
   padding: 2px;
 }
 </style>
