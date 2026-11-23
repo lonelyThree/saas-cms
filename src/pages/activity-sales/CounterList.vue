@@ -87,7 +87,7 @@
             alt="pic"
             v-if="item.key == 'imgs'"
           />
-          
+
           <!-- 渠道名称映射 -->
           <span v-else-if="item.key == 'placeName'">
             {{ placeMap[scope.row['place_id']] ? placeMap[scope.row['place_id']] : '渠道' }}
@@ -105,7 +105,7 @@
         <span v-else-if="item.key=='money'">{{ scope.row['money']}}分</span>
         <span v-else-if="item.key=='date'">{{ scope.row['start_date'] | date2Format}}到{{ scope.row['end_date']  | date2Format}}</span>
         <span v-else-if="item.key=='limit_money'">{{ scope.row.limit_money }} / {{   scope.row.receive_money || 0}}</span>
-        
+
         <span v-else-if="item.key=='time' && scope.row.update_at">{{ scope.row.update_at * 1000, 3 | dateFormat}}</span>
 
             <span v-else-if="item.key=='time'">{{ scope.row.create_at * 1000, 3 | dateFormat}}</span>
@@ -113,98 +113,68 @@
             <span v-else-if="item.key == 'auth_type'">{{ scope.row[item.key] == 2 ? '不需要'  :'需要' }}</span>
 
 <span v-else-if="item.key == 'business_type'">{{ getBusinessTypeText(scope.row) }}</span>
-       
+
 
           <!-- 发放方式映射 -->
           <span v-else-if="item.key == 'send_type'">
             {{ sendTypeMap[scope.row['send_type']] || '--' }}
           </span>
-        
+
 
           <!-- 默认显示 -->
           <span v-else>{{ scope.row[item.key] }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作" fixed="right" :width="200">
+      <el-table-column
+        align="center"
+        label="操作"
+        fixed="right"
+        width="160"
+        class-name="operation-cell">
         <template slot-scope="{ row }">
-          <el-button
-            type="danger"
-            class="op-btn"
-            plain
-            size="mini"
-            :loading="openLoading"
-            @click="statusClick(row, 3, '下架')"
-            v-if="row.status == 1"
-          >
-            下架
-          </el-button>
+          <div class="operation-actions">
+            <el-button
+              type="text"
+              size="mini"
+              class="op-btn op-danger"
+              :loading="openLoading"
+              @click="statusClick(row, 3, '下架')"
+              v-if="row.status == 1">
+              下架
+            </el-button>
 
-          <el-button
-            type="primary"
-            class="op-btn"
-            plain
-            size="mini"
-            :loading="openLoading"
-            v-if="rollType == 1 || rollType == 2"
-            @click="editClick(row)"
-          >
-            编辑
-          </el-button>
+            <el-button
+              type="text"
+              size="mini"
+              class="op-btn"
+              :loading="openLoading"
+              @click="statusClick(row, 1, '上架')"
+              v-if="row.status == 2 || row.status == 3">
+              上架
+            </el-button>
 
-          <el-button
-            type="success"
-            class="op-btn"
-            plain
-            size="mini"
-            :loading="openLoading"
-            @click="statusClick(row, 1, '上架')"
-            v-if="row.status == 2 || row.status == 3"
-          >
-            上架
-          </el-button>
+            <el-button
+              type="text"
+              size="mini"
+              class="op-btn"
+              v-if="rollType == 1 || rollType == 2"
+              @click="editClick(row)">
+              编辑
+            </el-button>
 
-          <el-button
-            type="primary"
-            class="op-btn"
-            plain
-            size="mini"
-            @click="showLogClick(row)"
-          >
-            打卡记录
-          </el-button>
-
-          <el-button
-            type="primary"
-            class="op-btn"
-            plain
-            size="mini"
-            @click="showBindClick(row)"
-          >
-            活动列表
-          </el-button>
-
-          <el-button
-            type="warning"
-            class="op-btn"
-            plain
-            size="mini"
-            @click="showTopicClick(row, 1)"
-            :loading="openLoading"
-          >
-            到店表单
-          </el-button>
-
-           <el-button
-            type="warning"
-            class="op-btn"
-            plain
-            size="mini"
-            @click="showTopicClick(row, 2)"
-            :loading="openLoading"
-          >
-            离店表单
-          </el-button>
+            <el-dropdown trigger="click" @command="handleMoreCommand($event, row)">
+              <el-button type="text" size="mini" class="op-btn op-more">
+                更多<i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="log">打卡记录</el-dropdown-item>
+                <el-dropdown-item command="bind">活动列表</el-dropdown-item>
+                <el-dropdown-item command="inForm">到店表单</el-dropdown-item>
+                <el-dropdown-item command="outForm">离店表单</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </div>
         </template>
       </el-table-column>
     </el-table>
@@ -267,7 +237,7 @@
 
 <script>
 // 假设你需要引入新的编辑和日志组件，请根据实际路径调整
-import counterEdit from "./modules/counter/edit.vue"; 
+import counterEdit from "./modules/counter/edit.vue";
 import counterLog from "./modules/counter/log.vue";
 import counterBind from "./modules/counter/bind.vue";
 import counterArea from "./modules/counter/area.vue";
@@ -290,7 +260,7 @@ export default {
         endTime: 0,
         placeId: "",
       },
-      
+
       // 映射字典
       limitTypeMap: {
         1: "白名单",
@@ -312,14 +282,14 @@ export default {
         { name: "草稿", value: 2 },
         { name: "下架", value: 3 },
       ],
-      
+
       incomePlaceList: [],
       queryPlaceList: [],
       placeMap: {},
 
       popId: 1,
       tabList: [],
-      
+
       // 贴柜活动表格配置
       tableConfig: [
         { label: "ID", key: "id" },
@@ -400,7 +370,7 @@ export default {
       this.fileList = [];
       this.showType = 2;
     },
-    
+
     editClick(row) {
       this.popTitle = "编辑【贴柜培训】活动【" + (this.placeMap[row.place_id] ? this.placeMap[row.place_id] : '渠道') + "】" + row.title ;
       this.popParams = { ...row };
@@ -433,6 +403,17 @@ export default {
       this.showType = 4;
     },
 
+    handleMoreCommand(command, row) {
+      if (command === 'log') {
+        this.showLogClick(row);
+      } else if (command === 'bind') {
+        this.showBindClick(row);
+      } else if (command === 'inForm') {
+        this.showTopicClick(row, 1);
+      } else if (command === 'outForm') {
+        this.showTopicClick(row, 2);
+      }
+    },
 
     statusClick(row, status, tip) {
       this.$confirm(`此操作将${tip}活动, 是否继续?`, "提示", {
@@ -549,9 +530,35 @@ export default {
 </script>
 
 <style lang="scss">
-.op-btn {
-  margin-bottom: 5px !important;
+.operation-cell .cell {
+  white-space: nowrap !important;
 }
+
+.operation-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  .op-btn {
+    margin: 0 !important;
+    padding: 0;
+  }
+
+  .op-danger.el-button--text {
+    color: var(--cms-danger) !important;
+  }
+
+  .op-more.el-button--text {
+    color: var(--cms-text-sub) !important;
+
+    &:hover,
+    &:focus {
+      color: var(--cms-primary) !important;
+    }
+  }
+}
+
 .el-upload-list__item {
   transition: none !important;
 }

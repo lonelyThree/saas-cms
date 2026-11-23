@@ -9,8 +9,8 @@
                 class="form-container"
                 inline>
 
-  
-           
+
+
                 <el-form-item label="标题">
                     <el-input
                         v-model="listQuery.title"
@@ -19,7 +19,7 @@
                         placeholder="请输入标题"/>
                 </el-form-item>
 
-                
+
                 <el-form-item label="类型">
                 <el-select
                         v-model="listQuery.type"
@@ -85,7 +85,7 @@
                     </el-select>
                 </el-form-item>
 
-                
+
 
                 <el-form-item>
                 <el-button
@@ -125,7 +125,7 @@
             :prop="item.key"
         >
         <template slot-scope="scope">
-            
+
             <span v-if="item.key=='time' && scope.row.update_at">{{ scope.row.update_at * 1000, 3 | dateFormat}}</span>
 
             <span v-else-if="item.key=='time' ">{{ scope.row.create_at * 1000, 3 | dateFormat}}</span>
@@ -133,53 +133,53 @@
             <span v-else-if="item.key == 'require_type'">{{ scope.row[item.key] == 1 ? '必填' : '选填' }}</span>
             <span v-else-if="item.key == 'public_type'">{{ scope.row[item.key] == 1 ? '公开' : '不公开' }}</span>
             <span v-else-if="item.key == 'status'">{{ scope.row[item.key] == 1 ? '启用' : '禁用' }}</span>
-    
+
             <span v-else>{{ scope.row[item.key] }}</span>
         </template>
         </el-table-column>
         <el-table-column
             align="center"
             label="操作"
-            fixed="right"
-            :width="150"
-        >
+            fixed="right" width="160"
+         class-name="operation-cell">
             <template slot-scope="{row}">
-            
-                <el-button
-            type="primary"
-            class="op-btn"
-            plain
-            size="mini"
+
+
+
+                <div class="operation-actions">
+
+                  <el-button type="text" size="mini" class="op-btn"
             @click="editClick(row)"
           >
-            编辑
-          </el-button>
-         
-          
 
-           <el-button
-              type="danger"
-              class="op-btn"
-              plain
-              size="mini"
+                    编辑
+
+                  </el-button>
+
+                  <el-button type="text" size="mini" class="op-btn"
               :loading="openLoading"
               @click="statusClick(row, 2, '禁用')"
               v-if="row.status == 1"
             >
-              禁用
-            </el-button>
 
-            <el-button
-                type="primary"
-                class="op-btn"
-                plain
-                size="mini"
-                :loading="openLoading"
-                @click="statusClick(row, 1, '启用')"
-                v-if="row.status == 2"
-              >
-                启用
-              </el-button>
+                    禁用
+
+                  </el-button>
+
+                  <el-dropdown trigger="click">
+
+                    <el-button type="text" size="mini" class="op-btn op-more">更多<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+
+                    <el-dropdown-menu slot="dropdown">
+
+                      <el-dropdown-item @click.native="statusClick(row, 1, '启用')" v-if="row.status == 2">启用</el-dropdown-item>
+
+                    </el-dropdown-menu>
+
+                  </el-dropdown>
+
+                </div>
+
             </template>
         </el-table-column>
         </el-table>
@@ -193,7 +193,7 @@
         @current-change="handleCurrentChange"
         />
       <el-dialog :visible.sync="showPopFlag" :title="popPopTitle" width="60%">
-              
+
               <el-form :model="popParams" :rules="rules" ref="form" label-width="180px">
                   <el-form-item label="标题：" prop="title">
                       <el-input v-model="popParams.title" style="width:300px" placeholder="请输入标题"></el-input>
@@ -205,7 +205,7 @@
                           <el-radio :label="1">单选</el-radio>
                           <el-radio :label="2">多选</el-radio>
                           <el-radio :label="3">单行文本</el-radio>
-                          <el-radio :label="4">多行文本</el-radio> 
+                          <el-radio :label="4">多行文本</el-radio>
                           <el-radio :label="5">图片</el-radio>
                           <el-radio :label="6">视频</el-radio>
                       </el-radio-group>
@@ -229,7 +229,7 @@
                   <el-form-item label="详情排序：" prop="sort">
         <el-input-number v-model="popParams.sort" :max="200000" :min="1" placeholder="越小越靠前"></el-input-number>
       </el-form-item>
-                  <el-form-item label="选项：" prop="answers" 
+                  <el-form-item label="选项：" prop="answers"
                   v-if="popParams.type == 1 ||  popParams.type == 2">
                     <el-tag
   :key="tag"
@@ -306,7 +306,7 @@ export default {
           {name: '图片', value: 5},
           {name: '视频', value: 6},
         ],
-      
+
       typeMap : {
         1: '单选',
         2: '多选',
@@ -333,7 +333,7 @@ export default {
           {name: '启用', value: 1},
           {name: '禁用', value: 2},
         ],
-      
+
       showPopFlag: false,
       popPopTitle: '',
       popParams: {
@@ -451,7 +451,7 @@ export default {
           this.$message.error(res.msg)
         }
       })
-    }, 
+    },
     statusClick(row, status, tip) {
       this.$confirm('此操作将' + tip + '该问题, 是否继续?', '提示', {
         confirmButtonText: tip,
@@ -496,7 +496,7 @@ export default {
             this.$message.error("类型为单选， 请至少添加两个答案")
             return false;
           }
-        
+
 
 
           this.loading = true

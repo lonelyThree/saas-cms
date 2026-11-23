@@ -50,8 +50,8 @@
           </el-select>
         </el-form-item>
 
-        
-        
+
+
 
         <!-- <el-form-item label="活动开始时间">
           <el-date-picker
@@ -128,7 +128,7 @@
                       size="mini"
                       icon="el-icon-document-copy"
                       @click="handleCopy(scope.row.link, $event)"
-                      v-else-if="item.key=='link'" 
+                      v-else-if="item.key=='link'"
                     >
                       复制
     </el-button>
@@ -138,76 +138,54 @@
       <el-table-column
         align="center"
         label="操作"
-        fixed="right"
-        :width="200"
-      >
+        fixed="right" width="160"
+       class-name="operation-cell">
         <template slot-scope="{row}">
- 
-          <el-button
-            type="danger"
-            class="op-btn"
-            plain
-            size="mini"
+
+
+
+          <div class="operation-actions">
+
+            <el-button type="text" size="mini" class="op-btn"
             :loading="openLoading"
             @click="statusClick(row, 3, '下架')"
             v-if="row.status == 1"
           >
-            下架
-          </el-button>
 
-          <el-button
-            type="primary"
-            class="op-btn"
-            plain
-            size="mini"
+              下架
+
+            </el-button>
+
+            <el-button type="text" size="mini" class="op-btn"
             :loading="openLoading"
             @click="editClick(row)"
             v-if="rollType == 1 || rollType == 2"
           >
-            编辑
-          </el-button>
-          <el-button
-            type="success"
-            class="op-btn"
-            plain
-            size="mini"
-            :loading="openLoading"
-            @click="statusClick(row, 1, '上架')"
-            v-if="row.status != 1"
-          >
-            上架
-          </el-button>
 
-           <el-button
-              type="warning"
-              class="op-btn"
-              plain
-              size="mini"
-              @click="showJoinClick(row)"
-            >
-              参与人员
+              编辑
+
             </el-button>
-         
-          <el-button
-            type="warning"
-            class="op-btn"
-            plain
-            size="mini"
-            @click="showTopicsClick(row)"
-            :loading="openLoading"
-            v-if="row.status != 3"
-          >
-            题目管理
-          </el-button>
 
-          <el-button
-                    type="warning"
-                    align="right"
-                     size="mini"
-                    @click="download(row)">
-                    <i class="el-icon-download"/>
-                    <span> 统计导出</span>
-                </el-button>
+            <el-dropdown trigger="click">
+
+              <el-button type="text" size="mini" class="op-btn op-more">更多<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+
+              <el-dropdown-menu slot="dropdown">
+
+                <el-dropdown-item @click.native="statusClick(row, 1, '上架')" v-if="row.status != 1">上架</el-dropdown-item>
+
+                <el-dropdown-item @click.native="showJoinClick(row)">参与人员</el-dropdown-item>
+
+                <el-dropdown-item @click.native="showTopicsClick(row)" v-if="row.status != 3">题目管理</el-dropdown-item>
+
+                <el-dropdown-item @click.native="download(row)">统计导出</el-dropdown-item>
+
+              </el-dropdown-menu>
+
+            </el-dropdown>
+
+          </div>
+
 
 
       </template>
@@ -320,7 +298,7 @@ export default {
         { label: '活动地址', key: 'link' },
         { label: '更新时间', key: 'time' },
       ],
-      
+
       fileList:[],
       fileTipList:[],
       listLoading:false,
@@ -421,14 +399,14 @@ export default {
       this.askRankName = row.title
       this.placeName = this.placeMap[row.place_id]?this.placeMap[row.place_id]:'渠道'
       this.showType = 4
-      
+
     },
     showQuestionClick(row) {
       this.askRankId = row.id
       this.askRankName = row.title
       this.placeName = this.placeMap[row.place_id]?this.placeMap[row.place_id]:'渠道'
       this.showType = 3
-      
+
     },
     statusClick(row, status, tip) {
       this.$confirm('此操作将'+tip+'活动, 是否继续?', '提示', {
@@ -455,10 +433,10 @@ export default {
         this.$message({
           type: 'info',
           message: '已取消'
-        });          
+        });
       });
-        
-        
+
+
     },
     BackList() {
       console.log("BackList", "BackList[[[]]]")
@@ -605,7 +583,7 @@ export default {
       this.currentDate = date.getFullYear() * 10000 + (date.getMonth() + 1)*100 + date.getDate()
       if (this.searchTime && this.searchTime.length == 2) {
         this.listQuery.startTime = this.searchTime[0] / 1000
-        this.listQuery.endTime = this.searchTime[1] / 1000 
+        this.listQuery.endTime = this.searchTime[1] / 1000
       }
       this.listLoading = true
       this.$http.get(API.speakList,{...this.listQuery}).then(res => {
@@ -628,7 +606,7 @@ export default {
       if(this.popParams.eyeOpen){
         delete this.popParams.eyeOpen;
       }
-      
+
       this.fileList=[];
       this.fileList.push({'url':row.logo})
       if(this.popParams.recipe_url){
@@ -686,8 +664,8 @@ export default {
       this.$message.error(parseObj.msg?parseObj.msg:'导出失败')
     };
     return
-    
-          
+
+
         }
         let fileName = decodeURIComponent(res.headers["content-disposition"].split("=")[1])
         if (!res.data) { //data为axios返回的文件流
@@ -703,7 +681,7 @@ export default {
             a.click() //触发下载
             URL.revokeObjectURL(a.href) //释放URL对象
       })
-      
+
     }
   }
 }
@@ -722,12 +700,12 @@ export default {
       list-style: disc; margin-left:20px;
       li{ line-height: 26px; font-size:12px;}
     }
-  }  
+  }
   .place-wrap{
     .flex-form{
        .el-form-item__content{display: flex !important;}
     }
-   
+
   }
-  
+
 </style>

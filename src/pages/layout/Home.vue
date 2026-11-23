@@ -42,7 +42,7 @@
           :collapse="collapsed"
           unique-opened
           :default-openeds="openeds"
-          
+
         >
           <template v-for="(el, index) in menuList">
             <el-menu-item
@@ -467,8 +467,7 @@ export default {
     background: var(--cms-bg-page);
     flex: 1;
     overflow-y: auto;
-    padding: 15px;
-    padding-bottom: 1px;
+    padding: 14px 6px 1px;
     .content-wrapper {
       background-color: #fff;
       box-sizing: border-box;

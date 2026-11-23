@@ -1,6 +1,6 @@
 <template>
   <div
-    class="userForm-info"
+    class="userForm-info place-wrap"
   >
   <el-page-header @back="backListClick" :content="popTitle">
           </el-page-header>
@@ -15,7 +15,7 @@
               v-model="popParams.account"
               clearable
               :disabled="isEdit"
-              style="width:200px" 
+              style="width:200px"
             />
           </el-form-item>
 
@@ -31,10 +31,10 @@
               auto-complete="new-password"
               :type="'password'"
               clearable
-              style="width:200px" 
+              style="width:200px"
             />
           </el-form-item>
-          
+
           <el-form-item
             v-if="!isEdit"
             label="确认密码"
@@ -44,15 +44,15 @@
               v-model="popParams.confirmPassword"
               :type="'password'"
               clearable
-              style="width:200px" 
+              style="width:200px"
             />
           </el-form-item>
-          
+
           <el-form-item
             label="角色"
             prop="type"
           >
-            <el-select v-model="popParams.type" clearable filterable placeholder="请选择角色" 
+            <el-select v-model="popParams.type" clearable filterable placeholder="请选择角色"
                   style="width:200px" >
               <el-option
                 v-for="item in roleList"
@@ -69,7 +69,7 @@
             prop="place_id"
             v-if="popParams.type == 2 || popParams.type == 5"
           >
-            <el-select v-model="popParams.place_id" filterable clearable placeholder="请选择渠道" 
+            <el-select v-model="popParams.place_id" filterable clearable placeholder="请选择渠道"
                   style="width:200px" >
               <el-option
                 v-for="item in placeList"
@@ -89,7 +89,7 @@
               v-model="popParams.remark"
               clearable
               :disabled="isEdit"
-              style="width:600px" 
+              style="width:600px"
             />
           </el-form-item>
 
@@ -193,7 +193,7 @@ export default {
         }
       })
     },
-    
+
     validConfirmPassword (rule, value, callback){
       const { password } = this.popParams
       if (!value) {

@@ -1,5 +1,5 @@
 <template>
-    <div class="role-setting">
+    <div class="role-setting place-wrap">
         <h2>互联网医院审核</h2>
         <div>
             <ul>
@@ -11,7 +11,7 @@
                 <li>5、医生开了处方后，药师签名之后，在把处方发送给患者</li>
             </ul>
         </div>
-       
+
         <div class="radio-wrap">
             <el-form ref="form" :model="form" label-width="80px">
                 <el-form-item label="审核">
@@ -22,7 +22,7 @@
                 </el-form-item>
             </el-form>
         </div>
-        
+
     </div>
 </template>
 <script>

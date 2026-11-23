@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="place-wrap">
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item  v-if="listQuery.activityId > 0">  <a href="/fans/inviteActivity">邀请活动</a> </el-breadcrumb-item>
       <el-breadcrumb-item  v-if="listQuery.activityId > 0"> {{activityName}}</el-breadcrumb-item>
@@ -166,11 +166,11 @@
               {{ businessUserTypeMap[scope.row['business_id_type']] ? businessUserTypeMap[scope.row['business_id_type']] : '--' }}
           </span>
            <span v-else-if="item.key=='clinic_id_type'">
-            {{ clinicUserTypeMap[scope.row['clinic_id_type']] ? clinicUserTypeMap[scope.row['clinic_id_type']] : '--' }}  
+            {{ clinicUserTypeMap[scope.row['clinic_id_type']] ? clinicUserTypeMap[scope.row['clinic_id_type']] : '--' }}
             </span>
 
           <el-link type="primary" @click="previceAuthImgClick(scope.row)" v-else-if="item.key=='auth_info' && scope.row.auth_imgs.length > 0">认证图片</el-link>
-          
+
           <span v-else-if="item.key=='adcode'">{{ adCodeToTxt(scope.row.adcode)}}</span>
           <span v-else-if="item.key=='store_adcode'">{{ adCodeToTxt(scope.row.store_adcode)}}</span>
           <span v-else>{{ scope.row[item.key] }}</span>
@@ -213,17 +213,17 @@
             <el-descriptions-item label="用户区域">{{adCodeToTxt(popParams.adcode)}}</el-descriptions-item>
 
 
-            
 
 
-            
-  
+
+
+
         </el-descriptions>
         <el-form-item label="认证图片" prop="imgList">
-          <el-image 
+          <el-image
           style="width: 100px; height: 100px; margin: 5px 10px;border: 1px solid #eee;"
           :key="imgSrc"
-          :src="imgSrc" 
+          :src="imgSrc"
           v-for="imgSrc in popParams.imgList"
           :preview-src-list="popParams.imgList"
           >
@@ -248,7 +248,7 @@
               allow-create
               default-first-option
               placeholder="请选择或者输入驳回原因"
-              style="width:600px" 
+              style="width:600px"
               >
               <el-option
                 v-for="item in reasonList"
@@ -295,7 +295,7 @@
          <el-form-item label="门店区域" prop="store_adcode" v-if="popParams.user_type == 1">
             <el-cascader
               size="large"
-              style="width:300px" 
+              style="width:300px"
               filterable
               :options="options"
               :props="{ checkStrictly: true }"
@@ -416,7 +416,7 @@ export default {
         {name: '地址异常', value: 1},
         {name: '已获取定位', value: 2},
       ],
-      
+
       //1-已注册 2-已访问 3-认证待审核 4-审核驳回 5-认证成功
       statusMap: { 1:'已注册', 2:'已访问', 3:'待审核', 4:'审核驳回', 5:'审核通过', 7:'已隐藏'},
 
@@ -442,7 +442,7 @@ export default {
         { text: '其他', value: 4 },
       ],
       idTypeMap: { 1:'店长', 2:'店员', 3:'药师', 4:'其他'},
-    
+
 
       businessUserTypeOptions: [
         { text: '业务员', value: 1 },
@@ -525,7 +525,7 @@ export default {
       this.listQuery.activityId = this.$route.query.activityId
       this.activityName = this.$route.query.activityName
     }
-    
+
     this.rollType = this.$storage.get('PE_USER_INFO').type
     if (this.rollType == 1) {
       this.getPlaceList()
@@ -543,7 +543,7 @@ export default {
   if (selectedOption) {
     this.popParams.chain_name = selectedOption.name
   }
-      
+
 },
 
     editChaineSarch(query) {
@@ -552,7 +552,7 @@ export default {
     chainSearch(query) {
       this.execChainSearch(query, false);
     },
-    submitEditForm(formName) { 
+    submitEditForm(formName) {
       if(this.selStoreEditOptions.length != 3 && this.popReviewParams.user_type == 1) {
         this.$message.error('请选择具体的区县');
         return
@@ -587,7 +587,7 @@ export default {
           return false;
         }
       });
-      
+
       // console.log("submitEditForm", this.popParams, this.selStoreEditOptions)
     },
     editlick(item) {
@@ -731,7 +731,7 @@ export default {
             } else {
               this.chainOptions = [];
             }
-        
+
       }
     },
     getPlaceList() {
@@ -742,7 +742,7 @@ export default {
           // }
           // this.placeList = res.data
 
-  
+
 
           let queryPlaceList = []
           res.data.forEach(el => {
@@ -778,9 +778,9 @@ export default {
        if (adcode != cityId * 100) {
         txt = txt + '/' + this.codeToText[adcode]
       }
-      
+
       return txt
-      
+
     },
     searchForm() {
       this.listQuery.page = 1
@@ -835,8 +835,8 @@ export default {
 
       this.downloadLoading = false
     return
-    
-          
+
+
         }
         let fileName = decodeURIComponent(res.headers["content-disposition"].split("=")[1])
         if (!res.data) { //data为axios返回的文件流
@@ -855,7 +855,7 @@ export default {
             a.click() //触发下载
             URL.revokeObjectURL(a.href) //释放URL对象
       })
-      
+
     },
   }
 }

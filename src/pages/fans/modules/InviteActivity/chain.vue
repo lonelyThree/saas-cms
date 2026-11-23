@@ -19,7 +19,7 @@
 
           <el-button type="success"  :loading="sortLoading" class="op-btn" plain @click="sortSubmitClick()" v-if="isSort">
             提交
-          </el-button>          
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -39,7 +39,7 @@
 
           <span v-else-if="item.key == 'time'">{{ scope.row.create_at * 1000, 3 | dateFormat }}</span>
           <span v-else-if="item.key == 'limit_num'">{{ scope.row.receive_num}} / {{ scope.row.limit_num}}</span>
-          
+
 
           <span v-else-if="item.key == 'status'">{{ scope.row[item.key] == 1 ? '启用' : '禁用' }}</span>
           <span v-else-if="item.key == 'name'">{{ scope.row.Chain.name}}</span>
@@ -48,22 +48,40 @@
           <span v-else>{{ scope.row[item.key] }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="操作" fixed="right" :width="150">
+      <el-table-column align="center" label="操作" fixed="right" width="160" class-name="operation-cell">
         <template slot-scope="{row}" v-if="!isSort">
 
-          <el-button type="primary" class="op-btn" plain size="mini" @click="editClick(row)">
-            编辑
-          </el-button>
 
-          <el-button type="danger" class="op-btn" plain size="mini" :loading="openLoading"
+
+          <div class="operation-actions">
+
+            <el-button type="text" size="mini" class="op-btn" @click="editClick(row)">
+
+              编辑
+
+            </el-button>
+
+            <el-button type="text" size="mini" class="op-btn" :loading="openLoading"
             @click="statusClick(row, 2, '禁用')" v-if="row.status == 1">
-            禁用
-          </el-button>
 
-          <el-button type="primary" class="op-btn" plain size="mini" :loading="openLoading"
-            @click="statusClick(row, 1, '启用')" v-if="row.status == 2">
-            启用
-          </el-button>
+              禁用
+
+            </el-button>
+
+            <el-dropdown trigger="click">
+
+              <el-button type="text" size="mini" class="op-btn op-more">更多<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+
+              <el-dropdown-menu slot="dropdown">
+
+                <el-dropdown-item @click.native="statusClick(row, 1, '启用')" v-if="row.status == 2">启用</el-dropdown-item>
+
+              </el-dropdown-menu>
+
+            </el-dropdown>
+
+          </div>
+
         </template>
       </el-table-column>
     </el-table>
@@ -191,7 +209,7 @@ export default {
     if (rollType != 1 && rollType != 2) {
       this.$router.push({ name: 'Index' })
     }
-    
+
     this.listQuery.receiptId = this.receiptId
     this.getProList()
     let arr = [0, 1];
@@ -200,7 +218,7 @@ export default {
           console.log(arr, '===arr===')
 
 
-    
+
   },
   components: { vDialog },
   methods: {
@@ -385,17 +403,9 @@ export default {
 }
 </script>
 <style lang='scss' scoped>
-::v-deep .el-table .cell {
-  text-align: center;
-}
 ::v-deep .sortable-chosen > td {
   /* 拖动的样式 */
   background-color: #eff2f6 !important;
   color: #409eff;
 }
-::v-deep .el-table--enable-row-hover .el-table__body tr:hover > td {
-  /* 修复拖拽的时候hover的不消失的问题 */
-  background-color: #fff;
-}
-
 </style>

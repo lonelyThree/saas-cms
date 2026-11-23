@@ -149,88 +149,56 @@
       <el-table-column
         align="center"
         label="操作"
-        fixed="right"
-        :width="200"
-      >
+        fixed="right" width="160"
+       class-name="operation-cell">
         <template slot-scope="{row}">
 
-          <el-button
-            type="danger"
-            class="op-btn"
-            plain
-            size="mini"
+
+
+          <div class="operation-actions">
+
+            <el-button type="text" size="mini" class="op-btn"
             :loading="openLoading"
             @click="statusClick(row, 3, '下架')"
             v-if="row.status == 1"
           >
-            下架
-          </el-button>
 
-          <el-button
-            type="primary"
-            class="op-btn"
-            plain
-            size="mini"
+              下架
+
+            </el-button>
+
+            <el-button type="text" size="mini" class="op-btn"
             :loading="openLoading"
             v-if="rollType == 1 || rollType == 2"
             @click="editClick(row)"
           >
-            编辑
-          </el-button>
-          <el-button
-            type="success"
-            class="op-btn"
-            plain
-            size="mini"
-            :loading="openLoading"
-            @click="statusClick(row, 1, '上架')"
-            v-if="row.status == 2 || row.status == 3"
-          >
-            上架
-          </el-button>
 
-            <el-button
-              type="primary"
-              class="op-btn"
-              plain
-              size="mini"
-              @click="showUserClick(row)"
-            >
-              报名记录
+              编辑
+
             </el-button>
 
-            <el-button
-            type="warning"
-            class="op-btn"
-            plain
-            size="mini"
-            @click="showTopicClick(row, 1)"
-            :loading="openLoading"
-          >
-            报名表单
-          </el-button>
+            <el-dropdown trigger="click">
 
-          <el-button
-            type="warning"
-            class="op-btn"
-            plain
-            size="mini"
-            @click="showTopicClick(row, 2)"
-            :loading="openLoading"
-            v-if="row.topic_type == 1"
-          >
-            问卷表单
-          </el-button>
-           <el-button
-            type="success"
-            class="op-btn"
-            plain
-            size="mini"
-            @click="showAwardClick(row)"
-            :loading="openLoading"
-          >
-            奖品管理
-          </el-button>
+              <el-button type="text" size="mini" class="op-btn op-more">更多<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+
+              <el-dropdown-menu slot="dropdown">
+
+                <el-dropdown-item @click.native="statusClick(row, 1, '上架')" v-if="row.status == 2 || row.status == 3">上架</el-dropdown-item>
+
+                <el-dropdown-item @click.native="showUserClick(row)">报名记录</el-dropdown-item>
+
+                <el-dropdown-item @click.native="showTopicClick(row, 1)">报名表单</el-dropdown-item>
+
+                <el-dropdown-item @click.native="showTopicClick(row, 2)" v-if="row.topic_type == 1">问卷表单</el-dropdown-item>
+
+                <el-dropdown-item @click.native="showAwardClick(row)">奖品管理</el-dropdown-item>
+
+              </el-dropdown-menu>
+
+            </el-dropdown>
+
+          </div>
+
 
 
         </template>

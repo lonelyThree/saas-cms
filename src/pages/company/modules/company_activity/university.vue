@@ -19,7 +19,7 @@
                         :key="item.value"
                         :label="item.name"
                         :value="item.value"
-                        
+
                         />
             </el-select>
           </el-form-item>
@@ -54,8 +54,8 @@
             </el-select>
           </el-form-item>
 
-          
-          
+
+
 
 
           <el-form-item>
@@ -105,7 +105,7 @@
                         size="mini"
                         icon="el-icon-document-copy"
                         @click="handleCopy(scope.row.link, $event)"
-                        v-else-if="item.key=='link'" 
+                        v-else-if="item.key=='link'"
                       >
                         复制
       </el-button>
@@ -115,46 +115,48 @@
         <el-table-column
           align="center"
           label="操作"
-          fixed="right"
-          :width="200"
-        >
+          fixed="right" width="160"
+         class-name="operation-cell">
           <template slot-scope="{row}">
 
-            <el-button
-            type="primary"
-            class="op-btn"
-            plain
-            size="mini"
+
+
+            <div class="operation-actions">
+
+              <el-button type="text" size="mini" class="op-btn"
             :loading="openLoading"
             v-if="rollType == 1 || rollType == 2"
             @click="editClick(row)"
           >
-            编辑
-          </el-button>
-  
-            <el-button
-              type="danger"
-              class="op-btn"
-              plain
-              size="mini"
+
+                编辑
+
+              </el-button>
+
+              <el-button type="text" size="mini" class="op-btn"
               :loading="openLoading"
               @click="statusClick(row, 2, '下架')"
               v-if="row.status == 1"
             >
-              下架
-            </el-button>
 
-            <el-button
-              type="success"
-              class="op-btn"
-              plain
-              size="mini"
-              :loading="openLoading"
-              @click="statusClick(row, 1, '上架')"
-              v-if="row.status == 2"
-            >
-              上架
-            </el-button>
+                下架
+
+              </el-button>
+
+              <el-dropdown trigger="click">
+
+                <el-button type="text" size="mini" class="op-btn op-more">更多<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+
+                <el-dropdown-menu slot="dropdown">
+
+                  <el-dropdown-item @click.native="statusClick(row, 1, '上架')" v-if="row.status == 2">上架</el-dropdown-item>
+
+                </el-dropdown-menu>
+
+              </el-dropdown>
+
+            </div>
+
           </template>
         </el-table-column>
       </el-table>
@@ -169,7 +171,7 @@
       />
       <el-dialog :visible.sync="showPopFlag" v-if="showPopFlag"  :title="popPopTitle" width="60%">
         <el-form :model="popPopParams" :rules="rules" ref="form" label-width="150px">
-        
+
          <el-form-item label="课程名称：" class="is-required">
           <el-select v-model="popPopParams.info" filterable remote reserve-keyword clearable placeholder="请输入课程名称关键词"
             :remote-method="courseSearch" :loading="courseSearchLoading" style="width:600px" >
@@ -190,7 +192,7 @@
       </el-dialog>
       <el-dialog :visible.sync="showTeacherPopFlag" v-else-if="showTeacherPopFlag"  :title="popPopTitle" width="60%">
         <el-form :model="popPopParams" :rules="rules" ref="form" label-width="150px">
-        
+
          <el-form-item label="讲师名称：" class="is-required">
           <el-select v-model="popPopParams.info" filterable remote reserve-keyword clearable placeholder="请输入讲师名称关键词"
             :remote-method="teacherSearch" :loading="teacherSearchLoading" style="width:600px" >
@@ -231,7 +233,7 @@ import { name } from "file-loader"
           type: 7,
           place_id: -1,
           company_id: -1,
-          relation_id: '',  
+          relation_id: '',
           courseId: '',
           name: '', //活动名称
           status: '',//活动状态  草稿 上架 下架
@@ -269,7 +271,7 @@ import { name } from "file-loader"
           { label: '课程状态', key: 'real_status', type: 7 },
           { label: '更新时间', key: 'time' },
         ],
-        
+
         listLoading:false,
         openLoading:false,
         popPoptitle:'',
@@ -316,7 +318,7 @@ import { name } from "file-loader"
         this.$http.get(API.courseTeacherSearch, {...params}).then(res => {
           this.teacherSearchLoading = false
           if (res.code == 200) {
-            
+
             this.teacherOptions = res.data
 
           } else {
@@ -339,7 +341,7 @@ import { name } from "file-loader"
         this.$http.get(API.courseSearch, {...params}).then(res => {
           this.courseSearchLoading = false
           if (res.code == 200) {
-            
+
             this.courseOptions = res.data
 
           } else {
@@ -354,7 +356,7 @@ import { name } from "file-loader"
       backListClick() {
       this.$emit('backList', this.ruleForm)
     },
- 
+
 
       handleCopy(text, event) {
         clip(text, event)
@@ -373,7 +375,7 @@ import { name } from "file-loader"
           } else {
             this.showTeacherPopFlag = true
           }
-          
+
       },
 
       editClick(row) {
@@ -406,8 +408,8 @@ import { name } from "file-loader"
 
           }
       },
-      
-    
+
+
       statusClick(row, status, tip) {
         this.$confirm('此操作将'+tip+ (this.listQuery.type == 7 ? "该课程" : "该讲师")+', 是否继续?', '提示', {
           confirmButtonText: tip,
@@ -433,16 +435,16 @@ import { name } from "file-loader"
           this.$message({
             type: 'info',
             message: '已取消'
-          });          
+          });
         });
-          
-          
+
+
       },
       searchForm(){
         this.listQuery.page = 1
         this.getTabList()
       },
-      
+
 
       getTabList(){
         this.listLoading = true
@@ -457,7 +459,7 @@ import { name } from "file-loader"
           }
         })
       },
-    
+
       handleCurrentChange(page){
         this.listQuery.page = page
         this.getTabList()
@@ -479,7 +481,7 @@ import { name } from "file-loader"
         console.log(params, "params", this.popParams, this.popPopParams)
             this.loading = true
             this.$http.post(API.companyActivityIndexSave, params).then(res => {
-                
+
                 if (res.code === 200) {
                     this.$message.success('保存成功')
                     setTimeout(() => {
@@ -523,12 +525,12 @@ import { name } from "file-loader"
         list-style: disc; margin-left:20px;
         li{ line-height: 26px; font-size:12px;}
       }
-    }  
+    }
     .place-wrap{
       .flex-form{
         .el-form-item__content{display: flex !important;}
       }
-    
+
     }
-    
+
   </style>

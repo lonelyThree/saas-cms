@@ -72,42 +72,32 @@
       <el-table-column
         align="center"
         label="操作"
-        fixed="right"
-        :width="150"
-      >
+        fixed="right" width="160"
+       class-name="operation-cell">
         <template slot-scope="{row}">
-          <el-button
-            type="primary"
-            plain
-            size="mini"
+
+          <div class="operation-actions">
+            <el-button type="text" size="mini" class="op-btn"
             @click="showDetail(row)"
           >
-            编辑
-          </el-button>
-          <el-button
-                type="danger"
-                class="op-btn"
-                plain
-                size="mini"
+              编辑
+            </el-button>
+            <el-button type="text" size="mini" class="op-btn"
                 :loading="openLoading"
                 @click="statusClick(row, 3, '禁用')"
                 v-if="row.status == 1"
               >
-                禁用
-              </el-button>
+              禁用
+            </el-button>
+            <el-dropdown trigger="click">
+              <el-button type="text" size="mini" class="op-btn op-more">更多<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="statusClick(row, 1, '启用')" v-if="row.status != 1">启用</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </div>
 
-              <el-button
-                type="success"
-                class="op-btn"
-                plain
-                size="mini"
-                :loading="openLoading"
-                @click="statusClick(row, 1, '启用')"
-                v-if="row.status != 1"
-              >
-                启用
-              </el-button>
-         
+
         </template>
       </el-table-column>
     </el-table>
@@ -150,7 +140,7 @@ export default {
         { label: '渠道号', key: 'place' },
         { label: '更新时间', key: 'update_at' },
       ],
-      
+
       fileList:[],
       listLoading:false,
       showDetailFlag:false,
@@ -160,7 +150,7 @@ export default {
       showType:1,
 
       openLoading:false,
-      
+
     }
   },
   mounted(){
@@ -208,7 +198,7 @@ export default {
        this.listQuery.page = 1
       this.getTabList()
     },
-    
+
 
     getTabList(){
       this.listLoading = true
@@ -273,12 +263,12 @@ export default {
       list-style: disc; margin-left:20px;
       li{ line-height: 26px; font-size:12px;}
     }
-  }  
+  }
   .place-wrap{
     .flex-form{
        .el-form-item__content{display: flex !important;}
     }
-   
+
   }
-  
+
 </style>

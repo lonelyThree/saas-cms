@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="place-wrap">
     <el-page-header @back="backListClick" :content="popTitle">
     </el-page-header>
     <el-divider></el-divider>
@@ -46,32 +46,51 @@
 
         </template>
       </el-table-column>
-      <el-table-column align="center" label="操作" fixed="right" :width="150">
+      <el-table-column align="center" label="操作" fixed="right" width="160" class-name="operation-cell">
         <template slot-scope="{row}">
 
-          <el-button type="primary" class="op-btn" plain size="mini" @click="editClick(row)">
-            编辑
-          </el-button>
-          <el-button type="danger" class="op-btn" plain size="mini" :loading="openLoading"
-            @click="statusClick(row, 2, '禁用')" v-if="row.status == 1">
-            禁用
-          </el-button>
 
-          <el-button type="primary" class="op-btn" plain size="mini" :loading="openLoading"
-            @click="statusClick(row, 1, '启用')" v-if="row.status == 2">
-            启用
-          </el-button>
+
+          <div class="operation-actions">
+
+            <el-button type="text" size="mini" class="op-btn" @click="editClick(row)">
+
+              编辑
+
+            </el-button>
+
+            <el-button type="text" size="mini" class="op-btn" :loading="openLoading"
+            @click="statusClick(row, 2, '禁用')" v-if="row.status == 1">
+
+              禁用
+
+            </el-button>
+
+            <el-dropdown trigger="click">
+
+              <el-button type="text" size="mini" class="op-btn op-more">更多<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+
+              <el-dropdown-menu slot="dropdown">
+
+                <el-dropdown-item @click.native="statusClick(row, 1, '启用')" v-if="row.status == 2">启用</el-dropdown-item>
+
+              </el-dropdown-menu>
+
+            </el-dropdown>
+
+          </div>
+
         </template>
       </el-table-column>
     </el-table>
     <el-pagination v-show="total > 0" :total="total" :page.sync="listQuery.page" :page-sizes="[10]" limit.sync="10"
       @current-change="handleCurrentChange" />
 
-  
+
     <el-dialog :visible.sync="showEditPopFlag" :title="popPopTitle" width="50%">
       <el-form :model="popPopParams" :rules="editRules" ref="editForm" label-width="100px">
 
-  
+
         <el-form-item label="部门名称" prop="name">
           <el-input v-model="popPopParams.name" style="width:300px" placeholder="请输入部门名称"></el-input>
         </el-form-item>
@@ -107,7 +126,7 @@ export default {
         { label: '部门名称', key: 'name' },
         { label: '状态', key: 'status' },
       ],
-      
+
       total: 0,
 
       rollType: 5,
@@ -193,7 +212,7 @@ export default {
           return false;
         }
       });
-      
+
       // console.log("submitEditForm", this.popPopParams, this.selStoreEditOptions)
     },
     editClick(item) {
@@ -202,14 +221,14 @@ export default {
       this.showEditPopFlag = true
 
     },
-  
-   
+
+
     searchForm() {
       this.listQuery.page = 1
       this.getTabList()
     },
     getTabList() {
-     
+
       this.listLoading = true
       this.listQuery.business_id = this.popParams.id
       this.$http.get(API. userBusinessDepartmentCmsList, { ...this.listQuery }).then(res => {

@@ -9,8 +9,8 @@
                 class="form-container"
                 inline>
 
-  
-           
+
+
                 <el-form-item label="题目名称">
                     <el-input
                         v-model="listQuery.name"
@@ -19,7 +19,7 @@
                         placeholder="请输入题目名称"/>
                 </el-form-item>
 
-                
+
                 <el-form-item label="答案A">
                     <el-input
                         v-model="listQuery.a"
@@ -107,59 +107,59 @@
             :prop="item.key"
         >
         <template slot-scope="scope">
-            
+
             <span v-if="item.key=='time' && scope.row.update_at">{{ scope.row.update_at * 1000, 3 | dateFormat}}</span>
 
             <span v-else-if="item.key=='time' ">{{ scope.row.create_at * 1000, 3 | dateFormat}}</span>
             <span v-else-if="item.key == 'type'">{{ scope.row[item.key] == 1 ? '单选' : (scope.row[item.key] == 3 ? '判断':'多选') }}</span>
             <span v-else-if="item.key == 'status'">{{ scope.row[item.key] == 1 ? '启用' : '禁用' }}</span>
-    
+
             <span v-else>{{ scope.row[item.key] }}</span>
         </template>
         </el-table-column>
         <el-table-column
             align="center"
             label="操作"
-            fixed="right"
-            :width="150"
-        >
+            fixed="right" width="160"
+         class-name="operation-cell">
             <template slot-scope="{row}">
-            
-                <el-button
-            type="primary"
-            class="op-btn"
-            plain
-            size="mini"
+
+
+
+                <div class="operation-actions">
+
+                  <el-button type="text" size="mini" class="op-btn"
             @click="editClick(row)"
           >
-            编辑
-          </el-button>
-         
-          
 
-           <el-button
-              type="danger"
-              class="op-btn"
-              plain
-              size="mini"
+                    编辑
+
+                  </el-button>
+
+                  <el-button type="text" size="mini" class="op-btn"
               :loading="openLoading"
               @click="statusClick(row, 2, '禁用')"
               v-if="row.status == 1"
             >
-              禁用
-            </el-button>
 
-            <el-button
-                type="primary"
-                class="op-btn"
-                plain
-                size="mini"
-                :loading="openLoading"
-                @click="statusClick(row, 1, '启用')"
-                v-if="row.status == 2"
-              >
-                启用
-              </el-button>
+                    禁用
+
+                  </el-button>
+
+                  <el-dropdown trigger="click">
+
+                    <el-button type="text" size="mini" class="op-btn op-more">更多<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+
+                    <el-dropdown-menu slot="dropdown">
+
+                      <el-dropdown-item @click.native="statusClick(row, 1, '启用')" v-if="row.status == 2">启用</el-dropdown-item>
+
+                    </el-dropdown-menu>
+
+                  </el-dropdown>
+
+                </div>
+
             </template>
         </el-table-column>
         </el-table>
@@ -173,7 +173,7 @@
         @current-change="handleCurrentChange"
         />
       <el-dialog :visible.sync="showPopFlag" :title="popPopTitle" width="60%">
-              
+
               <el-form :model="popPopParams" :rules="rules" ref="form" label-width="180px">
                 <el-form-item label="编号：" prop="index">
                     <el-input-number v-model="popPopParams.index" :max="1000" :min="1" placeholder="1~1000" :disabled="popPopParams.id" ></el-input-number>
@@ -205,7 +205,7 @@
                   <el-form-item label="答案E：" prop="e">
                       <el-input v-model="popPopParams.e" style="width:600px" placeholder="请输入答案E"></el-input>
                   </el-form-item>
-                  <el-form-item label="正确答案：" prop="correct" 
+                  <el-form-item label="正确答案：" prop="correct"
                   v-if="popPopParams.type == 1">
                       <el-radio-group
                           v-model="popPopParams.correct"
@@ -218,7 +218,7 @@
                       </el-radio-group>
 
                 </el-form-item>
-                <el-form-item label="正确答案：" prop="correct" 
+                <el-form-item label="正确答案：" prop="correct"
                   v-else-if="popPopParams.type == 3">
                       <el-radio-group
                           v-model="popPopParams.correct"
@@ -347,7 +347,7 @@ export default {
         page:1,
         limit:20,
       },
-      
+
       showPopFlag: false,
       popPopTitle: '',
       popPopParams: {
@@ -376,7 +376,7 @@ export default {
         type: [
           { required: true, message: '请选择题目类型', trigger: 'change' }
         ],
-        
+
         a: [
           { required: true, message: '请输入答案A', trigger: 'change' }
         ],
@@ -536,8 +536,8 @@ export default {
           this.$message.error(res.msg)
         }
       })
-    }, 
-   
+    },
+
     submitForm(formName) {
       //     const audio = new Audio(this.audioSrc);
       // audio.src = this.audioSrc;
@@ -553,7 +553,7 @@ export default {
         if (valid) {
           if(this.popPopParams.type == 2) {
             let checkList = this.popPopParams.checkList
-      
+
             checkList = checkList.filter(index => (index == 'A' || index == 'B' || index == 'C' || index == 'D' || index == 'E'))
             checkList.sort(function(a, b){
               return a < b ? -1 : 1
@@ -565,7 +565,7 @@ export default {
             }
             this.popPopParams.correct = this.popPopParams.checkList.join(',')
           }
-          
+
           if(this.popPopParams.d && this.popPopParams.d != "" && !this.popPopParams.c) {
             this.$message.error("请按照顺序补充答案C")
             return false;

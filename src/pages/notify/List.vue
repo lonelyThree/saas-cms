@@ -1,5 +1,5 @@
 <template>
-  <div class="container" v-if="type == 1">
+  <div class="container place-wrap" v-if="type == 1">
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item>消息通知</el-breadcrumb-item>
     </el-breadcrumb>
@@ -29,7 +29,7 @@
               />
             </el-select>
         </el-form-item>
-        
+
         <el-form-item>
             <el-button
             type="primary"
@@ -65,8 +65,8 @@
                   <i class="el-icon-arrow-right" ></i>
                 </el-col>
               </el-row>
-              
-              
+
+
             </div>
             <div class="text item"   @click="editNotify(item)">
               <el-row type="flex">
@@ -93,9 +93,9 @@
       </el-row>
   </div>
   <div v-else>请先选择渠道</div>
-  
+
   </div>
-  <div class="container" v-else>
+  <div class="container place-wrap" v-else>
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item>{{ popTitle }}</el-breadcrumb-item>
     </el-breadcrumb>
@@ -125,7 +125,7 @@
               class="alert-setting"
             >
             </el-alert>
-               
+
             <el-form-item label="发送设置：" prop="status">
               <el-radio v-model="popParams.status" :label=1>开启</el-radio>
               <el-radio v-model="popParams.status" :label=2>关闭</el-radio>
@@ -151,7 +151,7 @@
                 class="alert-setting"
               >
               </el-alert>
-               
+
               <el-form-item label="发送设置：" prop="sms_status">
                 <el-radio v-model="popParams.sms_status" :label=1>开启</el-radio>
                 <el-radio v-model="popParams.sms_status" :label=2>关闭</el-radio>
@@ -212,13 +212,13 @@ export default {
 
     }
   },
-  
+
   created() {
     var rollType = this.$storage.get('PE_USER_INFO').type
     rollType == 1 ? this.hasAdminRight = true : ''
     let list = [
     {name: "咨询回复通知", tip1:"添加历史模板消息请先选择“it科技--互联网/电子商务”分类，添加模板“问诊咨询跟进提醒”，编号：OPENTM415291759", tip2: "添加类目模板消息先选择“房屋中介”类目，添加模板“客户跟进提醒”，模板id：51373", type: 2, icon: 'el-icon-chat-dot-round'},
-    { name: "视频拨打提醒", tip1: "添加历史模板消息请先选择“it科技--互联网/电子商务”分类，添加模板“问诊咨询跟进提醒”，编号：OPENTM415291759", tip2: "添加类目模板消息先选择“房屋中介”类目，添加模板“客户跟进提醒”，模板id：51373", type: 7, icon: 'el-icon-chat-dot-round' }, 
+    { name: "视频拨打提醒", tip1: "添加历史模板消息请先选择“it科技--互联网/电子商务”分类，添加模板“问诊咨询跟进提醒”，编号：OPENTM415291759", tip2: "添加类目模板消息先选择“房屋中介”类目，添加模板“客户跟进提醒”，模板id：51373", type: 7, icon: 'el-icon-chat-dot-round' },
     { name: "订单付款成功通知", tip1: "添加历史模板消息请先选择“it科技--互联网/电子商务”分类，添加模板“订单生成通知”，模板ID：OPENTM205213550", tip2: "添加类目模板消息先选择“服饰内衣”类目，添加模板“订单支付成功通知”，模板id：51549", type: 4, icon: 'el-icon-s-order'},
     { name: "订单发货通知", tip1: "添加历史模板消息请先选择“it科技--互联网/电子商务”分类，添加模板“订单变更通知”，编号：OPENTM400520954", tip2: "添加类目模板消息先选择“百货/超市/便利店”类目，添加模板“订单发货提醒”，模板id：51549", type: 5, icon: 'el-icon-truck'},
     { name: "订单取消通知", tip1: "添加历史模板消息请先选择“it科技--互联网/电子商务”分类，添加模板“订单变更通知”，编号：OPENTM400520954", tip2: "添加类目模板消息先选择“服饰内衣”类目，添加模板“订单取消提醒”，模板id：51551", type: 6, icon: 'el-icon-document-delete'},
@@ -237,8 +237,8 @@ export default {
       this.tipArr.push(el)
     })
 
-        
-      
+
+
     if (this.hasAdminRight) {
       this.getPlaceList()
     } else {
@@ -274,7 +274,7 @@ export default {
       this.loading = true
       this.$http.get(API.getTempList, this.listQuery).then(res => {
         const { data: { data }, status, message } = res;
-       
+
         if (status == 200) {
           this.sel_place_id = this.listQuery.place_id
 
@@ -290,7 +290,7 @@ export default {
               sms_status: 2,
               place_id: this.sel_place_id,
             }
-            
+
           }
 
 
