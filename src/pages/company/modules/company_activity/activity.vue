@@ -31,8 +31,8 @@
             </el-select>
           </el-form-item>
 
-          
-          
+
+
 
 
           <el-form-item>
@@ -81,7 +81,7 @@
                         size="mini"
                         icon="el-icon-document-copy"
                         @click="handleCopy(scope.row.link, $event)"
-                        v-else-if="item.key=='link'" 
+                        v-else-if="item.key=='link'"
                       >
                         复制
       </el-button>
@@ -91,45 +91,48 @@
         <el-table-column
           align="center"
           label="操作"
-          fixed="right"
-          :width="200"
-        >
+          fixed="right" width="160"
+         class-name="operation-cell">
           <template slot-scope="{row}">
-  
-            <el-button
-              type="danger"
-              class="op-btn"
-              plain
-              size="mini"
+
+
+
+            <div class="operation-actions">
+
+              <el-button type="text" size="mini" class="op-btn"
               :loading="openLoading"
               @click="statusClick(row, 3, '下架')"
               v-if="row.status == 1"
             >
-              下架
-            </el-button>
 
-            <el-button
-              type="primary"
-              class="op-btn"
-              plain
-              size="mini"
+                下架
+
+              </el-button>
+
+              <el-button type="text" size="mini" class="op-btn"
               :loading="openLoading"
               v-if="rollType == 1 || rollType == 2"
               @click="editClick(row)"
             >
-              编辑
-            </el-button>
-            <el-button
-              type="success"
-              class="op-btn"
-              plain
-              size="mini"
-              :loading="openLoading"
-              @click="statusClick(row, 1, '上架')"
-              v-if="row.status == 2"
-            >
-              上架
-            </el-button>
+
+                编辑
+
+              </el-button>
+
+              <el-dropdown trigger="click">
+
+                <el-button type="text" size="mini" class="op-btn op-more">更多<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+
+                <el-dropdown-menu slot="dropdown">
+
+                  <el-dropdown-item @click.native="statusClick(row, 1, '上架')" v-if="row.status == 2">上架</el-dropdown-item>
+
+                </el-dropdown-menu>
+
+              </el-dropdown>
+
+            </div>
+
           </template>
         </el-table-column>
       </el-table>
@@ -229,7 +232,7 @@ import UploadSingleImg from "../../../../components/UploadSingleImg/index.vue";
           { label: '跳转地址', key: 'link' },
           { label: '更新时间', key: 'time' },
         ],
-        
+
         fileList:[],
         fileTipList:[],
         listLoading:false,
@@ -297,7 +300,7 @@ import UploadSingleImg from "../../../../components/UploadSingleImg/index.vue";
           this.fileTipList = []
           this.showPopFlag = true
       },
-      
+
       editClick(row) {
           this.popPopTitle = "编辑活动【"+row.title+"】"
           this.popPopParams = row
@@ -306,7 +309,7 @@ import UploadSingleImg from "../../../../components/UploadSingleImg/index.vue";
           this.fileList.push({'url':row.img})
           this.showPopFlag = true
       },
-    
+
       statusClick(row, status, tip) {
         this.$confirm('此操作将'+tip+'活动, 是否继续?', '提示', {
           confirmButtonText: tip,
@@ -332,16 +335,16 @@ import UploadSingleImg from "../../../../components/UploadSingleImg/index.vue";
           this.$message({
             type: 'info',
             message: '已取消'
-          });          
+          });
         });
-          
-          
+
+
       },
       searchForm(){
         this.listQuery.page = 1
         this.getTabList()
       },
-      
+
 
       getTabList(){
         this.listLoading = true
@@ -356,7 +359,7 @@ import UploadSingleImg from "../../../../components/UploadSingleImg/index.vue";
           }
         })
       },
-    
+
       handleCurrentChange(page){
         this.listQuery.page = page
         this.getTabList()
@@ -370,7 +373,7 @@ import UploadSingleImg from "../../../../components/UploadSingleImg/index.vue";
         if(valid) {
             this.loading = true
             this.$http.post(API.companyActivityIndexSave, this.popPopParams).then(res => {
-                
+
                 if (res.code === 200) {
                     this.$message.success('保存成功')
                     setTimeout(() => {
@@ -413,12 +416,12 @@ import UploadSingleImg from "../../../../components/UploadSingleImg/index.vue";
         list-style: disc; margin-left:20px;
         li{ line-height: 26px; font-size:12px;}
       }
-    }  
+    }
     .place-wrap{
       .flex-form{
         .el-form-item__content{display: flex !important;}
       }
-    
+
     }
-    
+
   </style>

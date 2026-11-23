@@ -68,14 +68,14 @@
                     @click="download">
                     <i class="el-icon-download"/>
                     <span> 导出</span>
-                </el-button> 
+                </el-button>
         </el-form-item>
 
       </el-form>
 
     </el-card>
 
-    
+
 
 
     <el-table v-loading="listLoading" :data="tabList" border fit highlight-current-row @sort-change="sortChange"
@@ -97,48 +97,34 @@
       <el-table-column
             align="center"
             label="操作"
-            fixed="right"
-            :width="120"
-        >
+            fixed="right" width="160"
+         class-name="operation-cell">
             <template slot-scope="{row}">
-           <el-button
-            type="primary"
-            class="op-btn"
-            plain
-            size="mini"
+
+           <div class="operation-actions">
+             <el-button type="text" size="mini" class="op-btn"
             @click="showTopicClick(row, 1)"
             :loading="openLoading"
           >
-            报名表单
-          </el-button>
-          <br />
-
-          <el-button
-            type="info"
-            class="op-btn"
-            
-            size="mini"
+               报名表单
+             </el-button>
+             <el-button type="text" size="mini" class="op-btn"
             @click="showTopicClick(row, 2)"
             :loading="openLoading"
             v-if="popParams.topic_type == 1"
           >
-            问卷表单
-          </el-button>
-         <br />
+               问卷表单
+             </el-button>
+             <el-dropdown trigger="click">
+               <el-button type="text" size="mini" class="op-btn op-more">更多<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+               <el-dropdown-menu slot="dropdown">
+                 <el-dropdown-item @click.native="reviewClick(row)">人工审核</el-dropdown-item>
+                 <el-dropdown-item @click.native="sendClick(row)" v-if="row.award_id < 1">发放奖项</el-dropdown-item>
+                 <el-dropdown-item @click.native="voteNumEditClick(row)" v-if="popParams.vote_type == 2">评分</el-dropdown-item>
+               </el-dropdown-menu>
+             </el-dropdown>
+           </div>
 
-          <el-button type="warning" plain class="op-btn" size="mini" @click="reviewClick(row)">
-            人工审核
-          </el-button>
-          <br />
-
-          <el-button type="danger"  plain class="op-btn" size="mini" @click="sendClick(row)" v-if="row.award_id < 1">
-            发放奖项
-          </el-button>
-           <br  v-if="row.award_id < 1" />
-
-          <el-button type="danger"  plain class="op-btn" size="mini" @click="voteNumEditClick(row)" v-if="popParams.vote_type == 2">
-            评分
-          </el-button>
             </template>
             </el-table-column>
     </el-table>
@@ -171,7 +157,7 @@
               allow-create
               default-first-option
               placeholder="请选择或者输入驳回原因"
-              style="width:600px" 
+              style="width:600px"
               >
               <el-option
                 v-for="item in reasonList"
@@ -256,7 +242,7 @@ export default {
   data() {
     return {
       formLabelWidth: '68px',
-      // 活动状态 
+      // 活动状态
       statusQuery: [{ id: 0, name: '全部' }, { id: 1, name: '审核通过展示' }, { id: 2, name: '待审核' }, { id: 3, name: '审核失败' }, { id: 4, name: '审核通过不展示'}],
       statusMap : {1: ' 审核通过展示', 2 : '待审核',  3 : '审核失败',  4 : '审核通过不展示' },
 
@@ -265,7 +251,7 @@ export default {
       menualAwardQuery: [],
       awardIdMap : {},
 
-    
+
 
       total: 0,
       tabList: [],
@@ -331,7 +317,7 @@ export default {
       popReviewParams:{
         voteId:0,
         openid:'',
-        
+
         opType:0,
         reason:'',
       },
@@ -457,7 +443,7 @@ export default {
                 this.menualAwardQuery.push({ id: awardItem.id, name: awardItem.name, award_type:awardItem.award_type,
                   money: awardItem.money
                 })
-              } 
+              }
 
             }
         } else {
@@ -499,8 +485,8 @@ export default {
       this.$message.error(parseObj.msg?parseObj.msg:'导出失败')
     };
     return
-    
-          
+
+
         }
         let fileName = decodeURIComponent(res.headers["content-disposition"].split("=")[1])
         if (!res.data) { //data为axios返回的文件流
@@ -516,7 +502,7 @@ export default {
             a.click() //触发下载
             URL.revokeObjectURL(a.href) //释放URL对象
       })
-      
+
     },
     showTopicClick(row, topicType) {
        // ✅ 取消上一个还在飞行中的请求
@@ -565,7 +551,7 @@ export default {
         this.$message.error('请先选择审核操作')
         return false
       }
-      if (this.popReviewParams.opType != 1 && !this.popReviewParams.reason) { 
+      if (this.popReviewParams.opType != 1 && !this.popReviewParams.reason) {
         this.$message.error('请填写原因')
         return false
       }
@@ -670,7 +656,7 @@ export default {
       });
     },
 
-    
+
     reviewClick(row) {
       this.popReviewParams.voteId = row.vote_id
       this.popReviewParams.openid = row.openid
@@ -687,7 +673,7 @@ export default {
       //     this.$message.error(res.msg)
       //   }
       // })
-      
+
     },
 
     sendClick(row) {
@@ -698,7 +684,7 @@ export default {
       this.popAwardParams.moeny = 0
 
       this.showAwardPopFlag = true
-      
+
     },
 
     voteNumEditClick(row) {
@@ -715,12 +701,12 @@ export default {
     },
 
     handleChangeAward(value) {
-    
+
     // 如果需要获取完整对象 item，可以手动查找
     if (value) {
       const selectedItem = this.menualAwardQuery.find(item => item.id === value);
       this.changeAward(selectedItem);
-    } 
+    }
   },
 
   },

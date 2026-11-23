@@ -1,3 +1,99 @@
+// 设计 token：全局颜色/尺寸唯一来源
+:root {
+  // 主色与交互态（与 tool-view 一致）
+  --cms-primary: #10b35a;
+  --cms-primary-hover: #56cc82;
+  --cms-primary-active: #088c47;
+  --cms-primary-light: #e9fbf1;
+  --cms-sidebar-active: #078c47;
+  --cms-sidebar-text: rgba(255, 255, 255, 0.85);
+
+  // 状态色
+  --cms-success: #10b35a;
+  --cms-success-bg: #e9fbf1;
+  --cms-danger: #f56c6c;
+  --cms-danger-bg: #fef0f0;
+  --cms-warning: #e6a23c;
+  --cms-warning-bg: #fdf6ec;
+  --cms-info: #409eff;
+  --cms-info-bg: #ecf5ff;
+
+  // 中性色
+  --cms-text-main: #333;
+  --cms-text-sub: #666;
+  --cms-text-placeholder: #9e9e9e;
+  --cms-border: #e5e8eb;
+  --cms-bg-page: #f2f2f2;
+  --cms-bg-panel: #fff;
+  --cms-table-hover: #f7f8fb;
+  --cms-topbar-bg: #f7f9fc;
+  --cms-sidebar-bg: #f7f9fc;
+  --cms-sidebar-line: #e8edf2;
+  --cms-sidebar-deep: #2f6b52;
+  --cms-sidebar-gradient: linear-gradient(180deg, #ffffff 0%, #f2f9f5 60%, #e4f4ec 100%);
+
+  // 尺寸
+  --cms-control-height: 30px;
+  --cms-table-row-height: 50px;
+  --cms-radius: 4px;
+  --cms-space: 12px;
+}
+
+// 可访问性基建
+*:focus-visible {
+  outline: 2px solid var(--cms-primary);
+  outline-offset: 2px;
+}
+
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.cms-skip-link {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+  z-index: 10000;
+
+  &:focus,
+  &:focus-visible {
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 8px 14px;
+    clip: auto;
+    clip-path: none;
+    overflow: visible;
+    left: 12px;
+    top: 12px;
+    border-radius: var(--cms-radius);
+    background: var(--cms-primary);
+    color: #fff;
+    font-size: 13px;
+    text-decoration: none;
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+}
+
 html,
 body {
   margin: 0;
@@ -48,8 +144,8 @@ textarea {
 }
 
 body {
-  background: #f2f2f2;
-  color: #666;
+  background: var(--cms-bg-page);
+  color: var(--cms-text-sub);
 }
 
 h1,
@@ -79,9 +175,8 @@ samp {
 }
 
 a {
-  color: #333;
+  color: var(--cms-text-main);
   text-decoration: none;
-  outline: none;
 }
 
 img {
@@ -98,7 +193,6 @@ input,
 select,
 textarea {
   font-size: 100%;
-  outline: none;
 }
 
 textarea {
@@ -106,11 +200,11 @@ textarea {
 }
 
 input::-webkit-input-placeholder {
-  color: #9e9e9e;
+  color: var(--cms-text-placeholder);
 }
 
 textarea::-webkit-input-placeholder {
-  color: #9e9e9e;
+  color: var(--cms-text-placeholder);
 }
 
 table {
@@ -212,7 +306,7 @@ table {
 //home.vue
 .el-menu-item,
 .el-submenu__title {
-  color: #fff;
+  color: var(--cms-text-main);
 }
 
 .el-menu .el-menu-item,
@@ -224,7 +318,7 @@ table {
 .el-menu-item:hover,
 .el-submenu .el-menu-item:hover,
 .el-submenu__title:hover {
-  background-color: #696969;
+  background-color: var(--cms-primary-light);
 }
 
 .el-submenu .el-menu-item {
@@ -232,15 +326,15 @@ table {
 }
 
 .el-menu--vertical {
-  background: #090723;
+  background: transparent;
   ul {
     background: transparent;
   }
 }
 
 .el-menu-item.is-active {
-  background-color: #00c1de;
-  color: #fff;
+  background-color: var(--cms-primary-light);
+  color: var(--cms-primary);
 }
 // .el-submenu .el-menu-item:hover {
 // background-color: #4A5064
@@ -253,4 +347,752 @@ input::-webkit-inner-spin-button {
 
 .tip-color {
   color: #ccc;
+}
+
+// ============================================================
+// Element UI 全局覆盖（仅在 .cms-list-page 作用域内生效，避免影响其他页面）
+// ============================================================
+.cms-list-page {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+
+  .cms-list-filter-card {
+    flex-shrink: 0;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+
+    > .el-card__body {
+      padding: 16px 0;
+    }
+  }
+
+  .cms-list-table-card {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 12px 0 0;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: hidden;
+  }
+
+  // 检索表单：紧凑 inline 横排，控件定宽挨着排
+  .el-form--inline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+    width: 100%;
+
+    .el-form-item {
+      margin-right: 0;
+      margin-bottom: 0;
+
+      .el-form-item__label {
+        color: var(--cms-text-main);
+      }
+
+      .el-form-item__content {
+        .el-input,
+        .el-select {
+          width: 200px;
+        }
+      }
+    }
+
+    .cms-search-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .el-input__inner {
+      height: var(--cms-control-height);
+      line-height: var(--cms-control-height);
+    }
+
+    .el-select .el-input__inner {
+      height: var(--cms-control-height);
+    }
+
+    .el-button {
+      height: var(--cms-control-height);
+      padding: 0 16px;
+    }
+
+    .el-button--primary {
+      background-color: var(--cms-primary);
+      border-color: var(--cms-primary);
+      color: #fff;
+
+      &:hover,
+      &:focus {
+        background-color: var(--cms-primary-hover);
+        border-color: var(--cms-primary-hover);
+        color: #fff;
+      }
+
+      &:active {
+        background-color: var(--cms-primary-active);
+        border-color: var(--cms-primary-active);
+        color: #fff;
+      }
+    }
+  }
+
+  // 面包屑下的分隔线在统一壳里多余
+  > .el-divider {
+    display: none;
+  }
+
+  .el-breadcrumb {
+    margin-bottom: 4px;
+  }
+
+  // 表格：去全部边框、表头浅灰、左对齐、统一行高、hover 色
+  .el-table {
+    flex: 1;
+    min-height: 0;
+    font-size: 13px;
+
+    &::before,
+    &::after {
+      display: none !important;
+    }
+
+    &.el-table--border,
+    &.el-table--group {
+      border: none;
+
+      &::after {
+        display: none !important;
+      }
+
+      th.el-table__cell,
+      td.el-table__cell {
+        border-right: none !important;
+        border-left: none !important;
+      }
+    }
+
+    th.gutter,
+    .gutter {
+      display: none !important;
+    }
+
+    th.el-table__cell,
+    th.el-table__cell.is-leaf {
+      height: 40px;
+      background: #f5f7fa !important;
+      color: var(--cms-text-sub);
+      font-weight: 400;
+      font-size: 13px;
+      border-bottom: none !important;
+      text-align: left;
+    }
+
+    .el-table__header-wrapper th.el-table__cell .cell {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--cms-text-sub);
+      text-align: left;
+    }
+
+    td.el-table__cell {
+      height: var(--cms-table-row-height);
+      border-bottom: 1px solid #f0f2f5 !important;
+      color: var(--cms-text-main);
+    }
+
+    .cell {
+      text-align: left;
+      white-space: normal;
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .el-table__body tr:hover > td.el-table__cell,
+    .el-table__body tr.hover-row > td.el-table__cell {
+      background-color: var(--cms-table-hover) !important;
+    }
+
+    .el-button--text {
+      color: var(--cms-primary);
+    }
+
+    .el-button--text:hover {
+      color: var(--cms-primary-hover);
+    }
+  }
+
+  // 分页右对齐
+  .el-pagination {
+    margin-top: 14px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+}
+
+// ============================================================
+// 全局列表页样式：所有含表格的 place-wrap 自动套用，无需逐页加 class
+// 用 :has(.el-table) 区分列表页与编辑页（编辑页无表格）
+// ============================================================
+.place-wrap:has(.el-table),
+.cms-list-page:has(.el-table),
+.app-container:has(.el-table) {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  box-sizing: border-box;
+  // 整页作为一张白卡，内部区块不再各自带卡片样式
+  background: var(--cms-bg-panel);
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 4px 12px rgba(15, 23, 42, 0.05);
+  padding: 12px 16px;
+  gap: 0;
+
+  // 面包屑：白卡内的标题行，底部细线分隔
+  > .el-breadcrumb {
+    padding: 8px 0 18px;
+    border-bottom: 1px solid #edf0f3;
+    margin-bottom: 0;
+    color: var(--cms-text-main);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 22px;
+
+    .el-breadcrumb__item:last-child .el-breadcrumb__inner,
+    .el-breadcrumb__item:last-child .el-breadcrumb__inner:hover {
+      color: var(--cms-text-main);
+      font-weight: 600;
+    }
+  }
+
+  // 检索区：白卡内一段，底部细线分隔
+  > .box-card,
+  > .cms-list-filter-card {
+    flex-shrink: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid #edf0f3;
+    box-shadow: none;
+
+    > .el-card__body {
+      padding: 12px 0;
+    }
+  }
+
+  > .el-divider {
+    display: none;
+  }
+
+  // 表格卡：不再单独成卡，贴齐白卡内边缘
+  > .cms-list-table-card,
+  > .el-table {
+    min-height: 100px;
+  }
+
+  > .cms-list-table-card {
+    padding: 8px 0 0;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  > .el-table {
+    margin-top: 8px !important;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .el-table {
+    font-size: 13px;
+
+    &::before,
+    &::after {
+      display: none !important;
+    }
+
+    &.el-table--border,
+    &.el-table--group {
+      border: none;
+
+      &::after {
+        display: none !important;
+      }
+
+      th.el-table__cell,
+      td.el-table__cell {
+        border-right: none !important;
+        border-left: none !important;
+      }
+    }
+
+    th.gutter,
+    .gutter {
+      display: none !important;
+    }
+
+    th.el-table__cell,
+    th.el-table__cell.is-leaf {
+      height: 40px;
+      background: #f5f7fa !important;
+      color: var(--cms-text-sub);
+      font-weight: 400;
+      font-size: 13px;
+      border-bottom: 1px solid #edf0f3 !important;
+      text-align: left;
+    }
+
+    .el-table__header-wrapper th.el-table__cell .cell {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--cms-text-sub);
+      text-align: left;
+    }
+
+    td.el-table__cell {
+      height: var(--cms-table-row-height);
+      border-bottom: 1px solid #f0f2f5 !important;
+      color: var(--cms-text-main);
+    }
+
+    .cell {
+      text-align: left;
+      white-space: normal;
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .el-table__body tr:hover > td.el-table__cell,
+    .el-table__body tr.hover-row > td.el-table__cell {
+      background-color: var(--cms-table-hover) !important;
+    }
+
+    // 操作列按钮：弱化为文字链接，去色块
+    .el-button--mini,
+    .el-button--small {
+      &.el-button--primary,
+      &.el-button--success,
+      &.el-button--warning,
+      &.el-button--danger,
+      &.is-plain {
+        background: transparent !important;
+        border-color: transparent !important;
+        padding: 0;
+        height: auto;
+        line-height: 1.5;
+        font-weight: 400;
+      }
+
+      &.el-button--primary,
+      &.el-button--success,
+      &.el-button--warning {
+        color: var(--cms-primary) !important;
+      }
+
+      &.el-button--danger {
+        color: var(--cms-danger) !important;
+      }
+
+      &:hover,
+      &:focus {
+        background: transparent !important;
+        text-decoration: underline;
+      }
+    }
+
+    .el-button--text {
+      color: var(--cms-primary);
+    }
+
+    .el-button--text:hover {
+      color: var(--cms-primary-hover);
+    }
+  }
+
+  // 空数据提示：图标 + 短文案，给高度让表格卡不塌
+  .el-table__empty-block {
+    min-height: 260px;
+
+    .el-table__empty-text {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--cms-text-placeholder);
+
+      &::before {
+        content: "\e78b"; // element-icons tickets 图标
+        font-family: element-icons;
+        font-size: 48px;
+        line-height: 1;
+        color: #d5dce4;
+        font-weight: 400;
+      }
+    }
+  }
+
+  // 检索区：紧凑 inline 横排 + 统一控件
+  .el-card .el-form--inline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+    width: 100%;
+
+    .el-form-item {
+      margin-right: 0;
+      margin-bottom: 0;
+
+      .el-form-item__content {
+        .el-input,
+        .el-select {
+          width: 200px;
+        }
+      }
+    }
+
+    .el-input__inner {
+      height: var(--cms-control-height);
+      line-height: var(--cms-control-height);
+    }
+
+    .el-button {
+      height: var(--cms-control-height);
+      padding: 0 16px;
+    }
+
+    .el-button--primary {
+      background-color: var(--cms-primary);
+      border-color: var(--cms-primary);
+      color: #fff;
+
+      &:hover,
+      &:focus {
+        background-color: var(--cms-primary-hover);
+        border-color: var(--cms-primary-hover);
+        color: #fff;
+      }
+    }
+  }
+
+  .el-pagination {
+    margin-top: 14px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+}
+
+// ============================================================
+// 全局编辑页样式：无表格的 place-wrap（表单页）
+// ============================================================
+.place-wrap:not(:has(.el-table)),
+.cms-list-page:not(:has(.el-table)),
+.app-container:not(:has(.el-table)) {
+  min-height: 100%;
+  box-sizing: border-box;
+
+  > .el-page-header {
+    margin-bottom: 0;
+    min-height: 56px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    background: var(--cms-bg-panel);
+    border-radius: 6px 6px 0 0;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+
+    .el-page-header__left {
+      margin-right: 24px;
+    }
+
+    .el-page-header__left::after {
+      right: -12px;
+      height: 14px;
+      background-color: #e4e7ed;
+    }
+
+    .el-page-header__title {
+      color: var(--cms-text-sub);
+      font-size: 13px;
+      font-weight: 400;
+    }
+
+    .el-page-header__content {
+      color: var(--cms-text-main);
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 24px;
+    }
+  }
+
+  > .el-divider {
+    display: none;
+  }
+
+  > .el-form,
+  > .form-container {
+    background: var(--cms-bg-panel);
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 4px 12px rgba(15, 23, 42, 0.05);
+    padding: 24px 32px;
+    margin-bottom: 16px;
+
+    .el-form-item {
+      margin-bottom: 22px;
+
+      .el-form-item__label {
+        color: var(--cms-text-main);
+        font-weight: 400;
+      }
+
+      // 统一常用控件宽度，富文本/文本域保持自适应
+      .el-form-item__content {
+        > .el-input,
+        > .el-select,
+        > .el-cascader,
+        > .el-date-editor,
+        > .el-input-number {
+          width: 320px;
+          max-width: 100%;
+        }
+
+        > .el-textarea {
+          width: 100%;
+          max-width: 640px;
+        }
+
+        .el-radio-group {
+          gap: 16px;
+        }
+      }
+    }
+  }
+
+  // 没有页头的编辑页，表单顶部自己带圆角
+  > .el-form:first-child,
+  > .form-container:first-child {
+    border-radius: 6px;
+  }
+}
+
+// 状态标签
+.cms-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 1;
+  white-space: nowrap;
+
+  &.is-ok {
+    color: var(--cms-success);
+    background: var(--cms-success-bg);
+  }
+
+  &.is-bad {
+    color: var(--cms-danger);
+    background: var(--cms-danger-bg);
+  }
+
+  &.is-warn {
+    color: var(--cms-warning);
+    background: var(--cms-warning-bg);
+  }
+
+  &.is-info {
+    color: var(--cms-info);
+    background: var(--cms-info-bg);
+  }
+}
+
+// ============================================================
+// 模板兼容：覆盖不同根容器、嵌套结构和非标准操作按钮
+// ============================================================
+.place-wrap:has(.el-table),
+.cms-list-page:has(.el-table),
+.app-container:has(.el-table) {
+  .el-breadcrumb {
+    .el-breadcrumb__item:last-child .el-breadcrumb__inner,
+    .el-breadcrumb__item:last-child .el-breadcrumb__inner:hover {
+      color: var(--cms-text-main);
+      font-weight: 600;
+    }
+  }
+
+  .el-page-header__content {
+    color: var(--cms-text-main);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .el-card:has(.el-form--inline) {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid #edf0f3;
+    box-shadow: none;
+
+    > .el-card__body {
+      padding: 12px 0;
+    }
+  }
+
+  .el-card:has(.el-table) {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+
+    > .el-card__body {
+      padding: 8px 0 0;
+    }
+  }
+
+  .el-form--inline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+    width: 100%;
+
+    .el-form-item {
+      margin-right: 0;
+      margin-bottom: 0;
+
+      .el-form-item__content {
+        .el-input,
+        .el-select {
+          width: 200px;
+        }
+      }
+    }
+
+    .el-input__inner,
+    .el-select .el-input__inner {
+      height: var(--cms-control-height);
+      line-height: var(--cms-control-height);
+    }
+
+    .el-button {
+      height: var(--cms-control-height);
+      padding: 0 16px;
+    }
+  }
+
+  .cms-search-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .operation-cell .cell {
+    white-space: nowrap;
+  }
+
+  .operation-actions {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    .op-btn {
+      margin: 0 !important;
+      padding: 0;
+    }
+
+    .op-danger.el-button--text {
+      color: var(--cms-danger) !important;
+    }
+
+    .op-more.el-button--text {
+      color: var(--cms-text-sub) !important;
+
+      &:hover,
+      &:focus {
+        color: var(--cms-primary) !important;
+      }
+    }
+  }
+
+  .el-form.search-box,
+  .form-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+
+    .el-form-item {
+      margin-right: 0;
+      margin-bottom: 0;
+
+      .el-input,
+      .el-select {
+        width: 200px;
+      }
+    }
+  }
+
+  .el-table {
+    margin-top: 8px !important;
+
+    td.el-table__cell:has(.el-button) .cell {
+      white-space: nowrap;
+    }
+
+    .cell > div:not(.operation-actions):has(.el-button) {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .cell > .el-button + .el-button {
+      margin-left: 8px;
+    }
+
+    .cell .el-button:not(.el-button--text) {
+      background: transparent !important;
+      border-color: transparent !important;
+      padding: 0;
+      height: auto;
+      line-height: 1.5;
+      font-weight: 400;
+
+      &.el-button--danger {
+        color: var(--cms-danger) !important;
+      }
+
+      &:hover,
+      &:focus {
+        background: transparent !important;
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.place-wrap:not(:has(.el-table)),
+.cms-list-page:not(:has(.el-table)),
+.app-container:not(:has(.el-table)) {
+  .el-page-header__content {
+    color: var(--cms-text-main);
+    font-size: 16px;
+    font-weight: 600;
+  }
 }

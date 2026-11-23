@@ -1,11 +1,23 @@
 <template>
   <div class="container">
+    <a class="cms-skip-link" href="#cms-main-content">跳到主内容</a>
     <div class="topbar-wrap">
-      <div class="topbar-title">药企营销管理系统</div>
-      <div class="topbar-account">
+      <div class="topbar-brand">
+        <span class="topbar-logo">{{ avatarChar }}</span>
+        <span class="topbar-title">药企营销管理系统</span>
+      </div>
+      <div class="topbar-actions">
+        <el-badge is-dot class="topbar-notice">
+          <i class="el-icon-bell topbar-icon" title="消息通知"></i>
+        </el-badge>
+        <span class="topbar-divider"></span>
+        <screenfull class="topbar-screenfull"></screenfull>
+        <span class="topbar-divider"></span>
         <el-dropdown trigger="click">
           <span class="userinfo-inner">
-            {{ nickname }} <i class="el-icon-caret-bottom"></i>
+            <span class="user-avatar">{{ avatarChar }}</span>
+            <span class="user-name">{{ nickname }}</span>
+            <i class="el-icon-caret-bottom"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item @click.native="showModifyPasswordDialog = true">
@@ -15,7 +27,6 @@
           </el-dropdown-menu>
         </el-dropdown>
       </div>
-      <screenfull class="topbar-screenfull fr"></screenfull>
     </div>
     <div class="main">
       <!--左侧导航-->
@@ -31,7 +42,7 @@
           :collapse="collapsed"
           unique-opened
           :default-openeds="openeds"
-          
+
         >
           <template v-for="(el, index) in menuList">
             <el-menu-item
@@ -63,7 +74,7 @@
         </el-menu>
       </aside>
       <!--右侧内容区-->
-      <section class="content-container">
+      <section id="cms-main-content" class="content-container" tabindex="-1">
         <transition name="fade" mode="out-in">
           <router-view></router-view>
         </transition>
@@ -137,6 +148,9 @@ var passwordInputRule = {
 export default {
   computed: {
     ...mapGetters(['menuList']),
+    avatarChar() {
+      return (this.nickname || '?').charAt(0).toUpperCase()
+    },
   },
   components: {
     Screenfull,
@@ -248,34 +262,98 @@ export default {
   height: 100%;
   width: 100%;
   .topbar-wrap {
-    height: 50px;
-    line-height: 50px;
-    background: linear-gradient(45deg, #1278f6, #00b4aa 50%, #1278f6);
-    padding: 0;
-    .topbar-title {
-      float: left;
-      text-align: left;
-      width: 200px;
-      font-size: 18px;
+    height: 56px;
+    background: var(--cms-topbar-bg);
+    border-bottom: 1px solid var(--cms-sidebar-line);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .topbar-logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: var(--cms-primary);
       color: #fff;
-      padding-left: 30px;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
     }
-    .topbar-account {
-      float: right;
-      padding-right: 12px;
+
+    .topbar-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--cms-text-main);
+      white-space: nowrap;
     }
+
+    .topbar-actions {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      height: 100%;
+    }
+
+    .topbar-icon {
+      font-size: 18px;
+      color: var(--cms-text-sub);
+      cursor: pointer;
+      vertical-align: middle;
+    }
+
+    .topbar-divider {
+      width: 1px;
+      height: 18px;
+      background: var(--cms-sidebar-line);
+      flex-shrink: 0;
+    }
+
     .topbar-screenfull {
-      padding: 14px;
+      color: var(--cms-text-sub);
+      display: flex;
+      align-items: center;
     }
+
     .userinfo-inner {
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--cms-text-main);
+    }
+
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--cms-primary);
       color: #fff;
-      padding-left: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .user-name {
+      font-size: 13px;
+      font-weight: 500;
     }
   }
   .main {
     position: absolute;
-    top: 50px;
+    top: 56px;
     bottom: 0px;
     display: flex;
     width: 100%;
@@ -283,7 +361,8 @@ export default {
   }
   aside {
     min-width: 50px;
-    background: #090723;
+    background: var(--cms-bg-panel);
+    border-right: 1px solid var(--cms-sidebar-line);
     padding-bottom: 30px;
     &::-webkit-scrollbar {
       display: none;
@@ -297,19 +376,65 @@ export default {
       background-color: transparent;
       border-radius: 0;
       border-right: 0;
+
+      // 一级菜单文字：深色，激活绿色
+      > .el-menu-item,
+      > .el-submenu > .el-submenu__title {
+        color: var(--cms-text-main);
+
+        i {
+          color: var(--cms-text-sub);
+          font-size: 16px;
+          margin-right: 4px;
+        }
+      }
+
+      // 二级菜单容器：浅灰底形成层级
+      .el-submenu .el-menu {
+        background-color: #f7f9fc !important;
+      }
+
+      // 二级菜单文字：灰、缩进更深
+      .el-submenu .el-menu-item {
+        color: var(--cms-text-sub);
+        padding-left: 56px !important;
+
+        &.is-active {
+          color: var(--cms-primary);
+          font-weight: 600;
+        }
+      }
+
       .el-submenu .el-menu-item.is-active,
       .el-menu-item.is-active,
       .el-submenu .el-menu-item.is-active:hover,
       .el-menu-item.is-active:hover {
-        background-color: #00c1de;
-        color: #fff;
+        position: relative;
+        background-color: var(--cms-primary-light);
+        color: var(--cms-primary);
+
+        &::before {
+          content: "";
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: 3px;
+          background: var(--cms-primary);
+        }
       }
 
       .leaf-menu-item.el-menu-item.is-active,
       .el-submenu.is-active .el-submenu__title span,
       .el-submenu.is-active .el-submenu__title i {
-        color: #00c1de;
+        color: var(--cms-primary);
         background-color: transparent;
+      }
+
+      // 激活的一级菜单图标高亮
+      > .el-menu-item.is-active i,
+      > .el-submenu.is-active > .el-submenu__title i {
+        color: var(--cms-primary);
       }
     }
 
@@ -323,33 +448,26 @@ export default {
 
     .el-menu .el-menu-item,
     .el-submenu .el-submenu__title {
-      height: 46px;
-      line-height: 46px;
+      height: 42px;
+      line-height: 42px;
       // padding-left: 55px !important;
     }
-
-    //   .el-menu-item:hover,
-    //   .el-submenu .el-menu-item:hover,
-    //   .el-submenu__title:hover {
-    //     // background-color: #7ed2df;
-    //   }
   }
 
   .menu-toggle {
     background: transparent;
     text-align: center;
-    color: white;
+    color: var(--cms-text-sub);
     height: 26px;
     line-height: 30px;
     cursor: pointer;
   }
 
   .content-container {
-    background: #fff;
+    background: var(--cms-bg-page);
     flex: 1;
     overflow-y: auto;
-    padding: 15px;
-    padding-bottom: 1px;
+    padding: 14px 6px 1px;
     .content-wrapper {
       background-color: #fff;
       box-sizing: border-box;

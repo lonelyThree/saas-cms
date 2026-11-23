@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="place-wrap">
         <el-page-header @back="backListClick" :content="popTitle">
         </el-page-header>
         <el-divider></el-divider>
@@ -32,7 +32,7 @@
                 </el-select>
               </el-form-item>
 
-                
+
 
                 <el-form-item>
                 <el-button
@@ -57,7 +57,7 @@
         </el-form>
         </el-card>
 
-      
+
 
         <el-table
         v-loading="listLoading"
@@ -76,16 +76,16 @@
             :prop="item.key"
         >
         <template slot-scope="scope">
-            
+
             <img width="60" :src="scope.row.img" alt="pic" v-if="item.key == 'img'" />
             <span v-else-if="item.key == 'time' && scope.row.update_at">{{ scope.row.update_at * 1000, 3 | dateFormat }}</span>
             <span v-else-if="item.key=='time'">{{ scope.row.create_at * 1000, 3 | dateFormat}}</span>
-            
+
             <span v-else-if="item.key == 'type'">
                 {{ aTypeMap[scope.row['type']] ? aTypeMap[scope.row['type']] : '未知' }}
               </span>
                <span v-else-if="item.key == 'award_type'">{{ scope.row[item.key] == 2 ? '积分' :(scope.row[item.key] == 3 ? '星币' :'现金' )}}</span>
-            
+
             <span v-else-if="item.key == 'status'">{{ scope.row[item.key] == 1 ? '启用' : '禁用' }}</span>
             <span v-else>{{ scope.row[item.key] }}</span>
         </template>
@@ -93,58 +93,54 @@
         <el-table-column
             align="center"
             label="操作"
-            fixed="right"
-            :width="150"
-        >
+            fixed="right" width="160"
+         class-name="operation-cell">
             <template slot-scope="{row}">
-            
-                <el-button
-              type="danger"
-              class="op-btn"
-              plain
-              size="mini"
+
+
+
+                <div class="operation-actions">
+
+                  <el-button type="text" size="mini" class="op-btn"
               :loading="openLoading"
               @click="statusClick(row, 2, '禁用')"
               v-if="row.status == 1"
             >
-              禁用
-            </el-button>
 
-            <el-button
-                type="primary"
-                class="op-btn"
-                plain
-                size="mini"
+                    禁用
+
+                  </el-button>
+
+                  <el-button type="text" size="mini" class="op-btn"
                 :loading="openLoading"
                 @click="statusClick(row, 1, '启用')"
                 v-if="row.status == 2"
               >
-                启用
-              </el-button>
 
-              <el-button
-            type="primary"
-            class="op-btn"
-            plain
-            size="mini"
-            :loading="openLoading"
-            @click="editClick(row)"
-          >
-            编辑
-          </el-button>
+                    启用
 
-          <el-button type="info" class="op-btn" size="mini" @click="viewJoinClick(row)">
-            邀请记录
-          </el-button>
+                  </el-button>
 
-          <el-button
-                    type="warning"
-                    align="right"
-                     size="mini"
-                    @click="download(row)">
-                    <i class="el-icon-download"/>
-                    <span> 统计导出</span>
-                </el-button>
+                  <el-button type="text" size="mini" class="op-btn" @click="editClick(row)">
+                    编辑
+                  </el-button>
+
+                  <el-dropdown trigger="click">
+
+                    <el-button type="text" size="mini" class="op-btn op-more">更多<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+
+                    <el-dropdown-menu slot="dropdown">
+
+                      <el-dropdown-item @click.native="viewJoinClick(row)">邀请记录</el-dropdown-item>
+
+                      <el-dropdown-item @click.native="download(row)">统计导出</el-dropdown-item>
+
+                    </el-dropdown-menu>
+
+                  </el-dropdown>
+
+                </div>
+
 
             </template>
         </el-table-column>
@@ -177,7 +173,7 @@
                   </el-radio-group>
                 </el-form-item>
                 <el-form-item label="活动名称：" prop="aid">
-      
+
                   <el-select v-model="popPopParams.aid"
                    v-if="isAdd"
                   style="width: 500px;"
@@ -236,7 +232,7 @@
         </el-dialog>
 
          <SalesManAwardDrawer :popTitle="salesManAwardDrawer.popTitle" :visible.sync="salesManAwardDrawer.visible" v-if="salesManAwardDrawer.visible"
-          :bind_type="salesManAwardDrawer.bind_type" :bind_id="salesManAwardDrawer.bind_id" 
+          :bind_type="salesManAwardDrawer.bind_type" :bind_id="salesManAwardDrawer.bind_id"
           :activity_type="salesManAwardDrawer.activity_type" :activity_id="salesManAwardDrawer.activity_id"
           @closeDrawer="closeSalesManAwardDrawer" />
 
@@ -247,7 +243,7 @@
 import SalesManAwardDrawer from '@/components/Drawer/SalesManAwardDrawer/index.vue';
 
 export default {
-  name: 'CounterBind', 
+  name: 'CounterBind',
 
 
    components: { SalesManAwardDrawer },
@@ -270,7 +266,7 @@ export default {
   { label: '课程管理', value: 6 },
   { label: '投票管理', value: 7 },
 ],
- 
+
       aTypeMap:{
   1: '快问快答',
   2: '开口说',
@@ -349,7 +345,7 @@ export default {
         sort: [
           { type: 'number', required: true,message: '请输入排序',trigger: 'change' }
         ],
-      
+
       },
 
       searchloading:false,
@@ -483,7 +479,7 @@ export default {
           this.$message.error(res.msg)
         }
       })
-      
+
     },
     addClick() {
         this.popPopParams = {
@@ -492,7 +488,7 @@ export default {
           aid:''
         }
         this.isAdd = true
-    
+
         this.popPopTitle = '添加活动'
         this.showPopFlag = true
     },
@@ -538,7 +534,7 @@ export default {
         if(valid && this.popPopParams.aid && this.popPopParams.award_type) {
             this.loading = true
             this.$http.post(API.counterBindSave, this.popPopParams).then(res => {
-                
+
                 if (res.code === 200) {
                     this.$message.success('保存成功')
                     setTimeout(() => {
@@ -585,14 +581,14 @@ export default {
        }
        console.log(this.salesManAwardDrawer, "salesManAwardDrawer")
 
-  
+
     },
 
     closeSalesManAwardDrawer() {
       this.salesManAwardDrawer.visible = false;
     },
     download(row) {
-      this.$http.download(API.domain+"CounterBindUserExport",{counterId:row.counter_id, 
+      this.$http.download(API.domain+"CounterBindUserExport",{counterId:row.counter_id,
         bind_id:row.id, aid:row.aid, type:row.type
       }).then(res => {
         if (res.status != 200) {
@@ -608,8 +604,8 @@ export default {
       this.$message.error(parseObj.msg?parseObj.msg:'导出失败')
     };
     return
-    
-          
+
+
         }
         let fileName = decodeURIComponent(res.headers["content-disposition"].split("=")[1])
         if (!res.data) { //data为axios返回的文件流
@@ -625,7 +621,7 @@ export default {
             a.click() //触发下载
             URL.revokeObjectURL(a.href) //释放URL对象
       })
-      
+
     }
   },
 }

@@ -1,6 +1,6 @@
 var configObj = {
     local: {
-        domain: 'http://localhost:8888/Admin/',
+        domain:'https://rmkapi.ai-xbys.com/Admin/',// 'http://localhost:8888/Admin/',
     },
     dev: {
         domain: 'http://localhost:8888/Admin/',

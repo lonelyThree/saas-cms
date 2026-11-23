@@ -1,8 +1,8 @@
 <template>
   <div
-    class="userForm-info"
+    class="userForm-info place-wrap"
   >
-  <el-page-header @back="cancelClick" >
+  <el-page-header @back="cancelClick" content="修改密码">
             </el-page-header>
             <el-divider></el-divider>
 

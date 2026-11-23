@@ -50,8 +50,8 @@
           </el-select>
         </el-form-item>
 
-        
-        
+
+
 
         <!-- <el-form-item label="活动开始时间">
           <el-date-picker
@@ -83,7 +83,7 @@
             type="primary">
             添加
           </el-button>
-        </el-form-item> 
+        </el-form-item>
 
       </el-form>
     </el-card>
@@ -119,86 +119,47 @@
                         size="mini"
                         icon="el-icon-document-copy"
                         @click="handleCopy(scope.row.link, $event)"
-                        v-else-if="item.key == 'link'" 
+                        v-else-if="item.key == 'link'"
                       >
                         复制
       </el-button>
-  
+
             <span v-else>{{ scope.row[item.key] }}</span>
       </template>
       </el-table-column>
       <el-table-column
         align="center"
         label="操作"
-        fixed="right"
-        :width="200"
-      >
+        fixed="right" width="160"
+       class-name="operation-cell">
         <template slot-scope="{row}">
-          <el-button
-              type="danger"
-              class="op-btn"
-              plain
-              size="mini"
+
+          <div class="operation-actions">
+            <el-button type="text" size="mini" class="op-btn"
               :loading="openLoading"
               @click="statusClick(row, 3, '下架')"
               v-if="row.status == 1"
             >
               下架
             </el-button>
-
-            <el-button
-              type="primary"
-              class="op-btn"
-              plain
-              size="mini"
+            <el-button type="text" size="mini" class="op-btn"
               :loading="openLoading"
               @click="editClick(row)"
               v-if="rollType == 1 || rollType == 2"
             >
               编辑
             </el-button>
-            <el-button
-              type="success"
-              class="op-btn"
-              plain
-              size="mini"
-              :loading="openLoading"
-              @click="statusClick(row, 1, '上架')"
-              v-if="row.status == 2"
-            >
-              上架
-            </el-button>
-         
-          <el-button
-            type="warning"
-            class="op-btn"
-            plain
-            size="mini"
-            @click="showRanksClick(row)"
-          >
-            排行榜
-          </el-button>
+            <el-dropdown trigger="click">
+              <el-button type="text" size="mini" class="op-btn op-more">更多<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="statusClick(row, 1, '上架')" v-if="row.status == 2">上架</el-dropdown-item>
+                <el-dropdown-item @click.native="showRanksClick(row)">排行榜</el-dropdown-item>
+                <el-dropdown-item @click.native="showQuestionClick(row)">问题管理</el-dropdown-item>
+                <el-dropdown-item @click.native="showAwardsClick(row)">奖品管理</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </div>
 
-
-          <el-button
-            type="success"
-            class="op-btn"
-            plain
-            size="mini"
-            @click="showQuestionClick(row)"
-          >
-            问题管理
-          </el-button>
-
-          <el-button
-            type="primary"
-            class="op-btn"
-            plain
-            size="mini"
-            @click="showAwardsClick(row)"
-          >
-            奖品管理
-          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -307,7 +268,7 @@ export default {
         { label: '结束日期', key: 'end_time' },
         { label: '活动地址', key: 'link', width:'100px' },
       ],
-      
+
       fileList:[],
       listLoading:false,
       showDetailFlag:false,
@@ -377,19 +338,19 @@ export default {
       this.placeName = this.placeMap[row.place_id]?this.placeMap[row.place_id]:'渠道'
       this.popTitle = "【快问快答】活动【" + (this.placeMap[row.place_id] ? this.placeMap[row.place_id] : '渠道') + "】【" + row.title + "】排行榜"
       this.showType = 5
-      
+
     },
     showAwardsClick(row) {
       this.askRankId = row.id
       this.popTitle = "【快问快答】活动【" + (this.placeMap[row.place_id] ? this.placeMap[row.place_id] : '渠道') + "】【" + row.title + "】奖品管理"
       this.showType = 4
-      
+
     },
     showQuestionClick(row) {
       this.askRankId = row.id
       this.popTitle = "【快问快答】活动【" + (this.placeMap[row.place_id] ? this.placeMap[row.place_id] : '渠道') + "】【" + row.title + "】问题管理"
       this.showType = 3
-      
+
     },
     BackList() {
       this.showType = 1
@@ -465,12 +426,12 @@ export default {
        this.listQuery.page = 1
       this.getTabList()
     },
-    
+
 
     getTabList(){
       if (this.searchTime && this.searchTime.length == 2) {
         this.listQuery.startTime = this.searchTime[0] / 1000
-        this.listQuery.endTime = this.searchTime[1] / 1000 
+        this.listQuery.endTime = this.searchTime[1] / 1000
       }
       this.listLoading = true
       this.$http.get(API.quickList,{...this.listQuery}).then(res => {
@@ -516,7 +477,7 @@ export default {
 
 
     },
-    
+
      handleCurrentChange(page){
       this.listQuery.page = page
       this.getTabList()
@@ -538,12 +499,12 @@ export default {
       list-style: disc; margin-left:20px;
       li{ line-height: 26px; font-size:12px;}
     }
-  }  
+  }
   .place-wrap{
     .flex-form{
        .el-form-item__content{display: flex !important;}
     }
-   
+
   }
-  
+
 </style>

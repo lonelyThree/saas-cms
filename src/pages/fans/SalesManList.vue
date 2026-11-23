@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="place-wrap">
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item  v-if="listQuery.activityId > 0">  <a href="/fans/inviteActivity">邀请活动</a> </el-breadcrumb-item>
       <el-breadcrumb-item  v-if="listQuery.activityId > 0"> {{activityName}}</el-breadcrumb-item>
@@ -99,18 +99,18 @@
            <span v-else-if="item.key == 'last_login_at'"> {{ scope.row.last_login_at * 1000, 3 | dateFormatFilter }}</span>
            <span v-else-if="item.key == 'reg_at'"> {{ scope.row.reg_at * 1000, 3 | dateFormatFilter }}</span>
 
-    
+
           <span v-else-if="item.key == 'status'">
             {{ statusMap[scope.row['status']] ? statusMap[scope.row['status']] : '未知' }}
           </span>
 
           <span v-else-if="item.key=='adcode'">{{ adCodeToTxt(scope.row.adcode)}}</span>
-    
+
 
            <span v-else-if="item.key=='company_id_type'">
               {{ companyIdTypeMap[scope.row['company_id_type']] ? companyIdTypeMap[scope.row['company_id_type']] : '--' }}
           </span>
-          
+
           <span v-else>{{ scope.row[item.key] }}</span>
 
           <el-link type="warning" @click="reviewClick(scope.row)" v-if="item.key=='status'">修改状态</el-link>
@@ -148,7 +148,7 @@
               allow-create
               default-first-option
               placeholder="请选择或者输入驳回原因"
-              style="width:600px" 
+              style="width:600px"
               >
               <el-option
                 v-for="item in reasonList"
@@ -232,11 +232,11 @@ export default {
         {name: '审核通过', value: 6},
         {name: '审核驳回', value: 7},
       ],
-      
+
       //1-已注册 2-已访问 3-认证待审核 4-认证失败 5-认证成功
       statusMap: { 3:'待审核', 4:'审核驳回', 5:'审核通过'},
 
-     
+
       showReviewPopFlag: false,
       popParams:{},
       reviewLoading:false,
@@ -268,7 +268,7 @@ export default {
       this.listQuery.activityId = this.$route.query.activityId
       this.activityName = this.$route.query.activityName
     }
-    
+
     this.rollType = this.$storage.get('PE_USER_INFO').type
     if (this.rollType == 1) {
       this.getPlaceList()
@@ -287,12 +287,12 @@ export default {
         this.listQuery.order = 0
       } else if ('money' == obj.prop) {
         this.listQuery.order = (obj.order == 'ascending' ? 1 : 2)
-        
+
       } else if ('lock_money' == obj.prop) {
         this.listQuery.order = (obj.order == 'ascending' ? 3 : 4)
       } else if ('out_money' == obj.prop) {
         this.listQuery.order = (obj.order == 'ascending' ? 5 : 6)
-      } 
+      }
       this.listQuery.page = 1
       this.getTabList()
     },
@@ -341,7 +341,7 @@ export default {
       this.showReviewPopFlag = true
 
     },
-    
+
     getPlaceList() {
       this.$http.get(API.getAllPlace).then(res => {
         if (res.code == 200) {
@@ -371,7 +371,7 @@ export default {
         }
       })
     },
-    
+
     searchForm() {
       this.listQuery.page = 1
       this.getTabList()
@@ -411,9 +411,9 @@ export default {
        if (adcode != cityId * 100) {
         txt = txt + '/' + this.codeToText[adcode]
       }
-      
+
       return txt
-      
+
     },
   }
 }

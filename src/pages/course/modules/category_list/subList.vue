@@ -31,8 +31,8 @@
             </el-select>
           </el-form-item>
 
-          
-          
+
+
 
 
           <el-form-item>
@@ -79,7 +79,7 @@
                         size="mini"
                         icon="el-icon-document-copy"
                         @click="handleCopy(scope.row.link, $event)"
-                        v-else-if="item.key=='link'" 
+                        v-else-if="item.key=='link'"
                       >
                         复制
       </el-button>
@@ -89,56 +89,50 @@
         <el-table-column
           align="center"
           label="操作"
-          fixed="right"
-          :width="200"
-        >
+          fixed="right" width="160"
+         class-name="operation-cell">
           <template slot-scope="{row}">
-  
-            <el-button
-              type="danger"
-              class="op-btn"
-              plain
-              size="mini"
+
+
+
+            <div class="operation-actions">
+
+              <el-button type="text" size="mini" class="op-btn"
               :loading="openLoading"
               @click="statusClick(row, 3, '下架')"
               v-if="row.status == 1"
             >
-              下架
-            </el-button>
 
-            <el-button
-              type="primary"
-              class="op-btn"
-              plain
-              size="mini"
+                下架
+
+              </el-button>
+
+              <el-button type="text" size="mini" class="op-btn"
               :loading="openLoading"
               v-if="rollType == 1 || rollType == 2"
               @click="editClick(row)"
             >
-              编辑
-            </el-button>
-            <el-button
-              type="success"
-              class="op-btn"
-              plain
-              size="mini"
-              :loading="openLoading"
-              @click="statusClick(row, 1, '上架')"
-              v-if="row.status == 2"
-            >
-              上架
-            </el-button>
 
-            <el-button
-              type="warning"
-              class="op-btn"
-              plain
-              size="mini"
-              :loading="openLoading"
-              @click="showCourseClick(row)"
-            >
-              关联课程列表
-            </el-button>
+                编辑
+
+              </el-button>
+
+              <el-dropdown trigger="click">
+
+                <el-button type="text" size="mini" class="op-btn op-more">更多<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+
+                <el-dropdown-menu slot="dropdown">
+
+                  <el-dropdown-item @click.native="statusClick(row, 1, '上架')" v-if="row.status == 2">上架</el-dropdown-item>
+
+                  <el-dropdown-item @click.native="showCourseClick(row)">关联课程列表</el-dropdown-item>
+
+                </el-dropdown-menu>
+
+              </el-dropdown>
+
+            </div>
+
           </template>
         </el-table-column>
       </el-table>
@@ -153,7 +147,7 @@
       />
       <el-dialog :visible.sync="showPopFlag" v-if="showPopFlag"  :title="popPopTitle" width="60%">
         <el-form :model="popPopParams" :rules="rules" ref="form" label-width="150px">
-        
+
           <el-form-item label="名称：" prop="name">
             <el-input v-model="popPopParams.name" style="width:600px" placeholder="请输入名称"></el-input>
           </el-form-item>
@@ -215,14 +209,14 @@
           { label: '跳转地址', key: 'link' },
           { label: '更新时间', key: 'time' },
         ],
-        
+
         listLoading:false,
         openLoading:false,
         popPoptitle:'',
         popPopParams:{
         },
         showPopFlag:false,
-        
+
 
       rules: {
         title: [
@@ -247,7 +241,7 @@
       backListClick() {
       this.$emit('backList', this.ruleForm)
     },
- 
+
 
       handleCopy(text, event) {
         clip(text, event)
@@ -259,7 +253,7 @@
           }
           this.showPopFlag = true
       },
-      
+
       editClick(row) {
           this.popPopTitle = "编辑"+this.popTitle+"【"+row.name+"】"
           this.popPopParams = row
@@ -273,7 +267,7 @@
           this.popPopParams = row
           this.showType = 2
       },
-    
+
       statusClick(row, status, tip) {
         this.$confirm('此操作将'+tip+'二级分类, 是否继续?', '提示', {
           confirmButtonText: tip,
@@ -299,16 +293,16 @@
           this.$message({
             type: 'info',
             message: '已取消'
-          });          
+          });
         });
-          
-          
+
+
       },
       searchForm(){
         this.listQuery.page = 1
         this.getTabList()
       },
-      
+
 
       getTabList(){
         this.listLoading = true
@@ -323,7 +317,7 @@
           }
         })
       },
-    
+
       handleCurrentChange(page){
         this.listQuery.page = page
         this.getTabList()
@@ -336,7 +330,7 @@
         if(valid) {
             this.loading = true
             this.$http.post(API.courseCategorySave, this.popPopParams).then(res => {
-                
+
                 if (res.code === 200) {
                     this.$message.success('保存成功')
                     setTimeout(() => {
@@ -366,7 +360,7 @@
       this.showType = 1
       this.getTabList()
     },
-  
+
     }
   }
   </script>
@@ -384,12 +378,12 @@
         list-style: disc; margin-left:20px;
         li{ line-height: 26px; font-size:12px;}
       }
-    }  
+    }
     .place-wrap{
       .flex-form{
         .el-form-item__content{display: flex !important;}
       }
-    
+
     }
-    
+
   </style>

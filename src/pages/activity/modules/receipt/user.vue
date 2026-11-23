@@ -27,7 +27,7 @@
                       </el-option>
                     </el-select>
                 </el-form-item>
-           
+
                 <el-form-item label="粉丝名称">
                     <el-input
                         v-model="listQuery.nickname"
@@ -36,7 +36,7 @@
                         placeholder="请输入粉丝名称"/>
                 </el-form-item>
 
-                
+
                 <el-form-item label="手机号码">
                     <el-input
                         v-model="listQuery.mobile"
@@ -61,8 +61,8 @@
                         placeholder="请输入openid"/>
                 </el-form-item>
 
-               
-                
+
+
                 <el-form-item
                     label="选择奖项"
                 >
@@ -120,7 +120,7 @@
         </el-card>
 
 
-      
+
 
         <el-table
         v-loading="listLoading"
@@ -150,7 +150,7 @@
                 {{ statusMap[scope.row[item.key]]? statusMap[scope.row[item.key]]:'未知'}}
             </span>
 
-            
+
             <span v-else-if="item.key=='award'">
                  {{awardMap[scope.row['awardId']]?awardMap[scope.row['awardId']]:'未知'}}
             </span>
@@ -167,99 +167,36 @@
         <el-table-column
             align="center"
             label="操作"
-            fixed="right"
-            :width="200"
-        >
+            fixed="right" width="160"
+         class-name="operation-cell">
             <template slot-scope="{row}">
-            <el-button
-                type="primary"
-                class="op-btn"
-                plain
-                size="mini"
+
+            <div class="operation-actions">
+              <el-button type="text" size="mini" class="op-btn"
                 @click="viewReceiptClick(row)"
             >
                 小票
-            </el-button>
-
-            <el-button
-                type="success"
-                class="op-btn"
-                plain
-                size="mini"
+              </el-button>
+              <el-button type="text" size="mini" class="op-btn"
                 @click="viewDayNumClick(row)"
             >
                 每天统计
-            </el-button>
-
-            <!-- <div> -->
-
-            <!-- <el-button
-                type="danger"
-                class="op-btn"
-                plain
-                size="mini"
-                @click="statusClick(row, 1, '解除')"
-                v-if="row.r_status == 2"
-            >
-                解除异常
-            </el-button>
-            <el-button
-                type="danger"
-                class="op-btn"
-                plain
-                size="mini"
-                @click="statusClick(row, 2, '标记')"
-                v-else
-            >
-                标记异常
-            </el-button> -->
-            <!-- </div> -->
-            
-            <div>
-
-              <el-button
-                type="danger"
-                class="op-btn"
-                plain
-                size="mini"
-                @click="updateDayNumClick(row)"
-            >
-                刷新统计
-            </el-button>
-
-            <el-button
-                type="warning"
-                class="op-btn"
-                plain
-                size="mini"
-                @click="showDetailClick(row)"
-                v-if="row.addressId > 0"
-            >
-                地址
-            </el-button>
+              </el-button>
+              <el-dropdown trigger="click">
+                <el-button type="text" size="mini" class="op-btn op-more">更多<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item @click.native="statusClick(row, 1, '解除')" v-if="row.r_status == 2">解除异常</el-dropdown-item>
+                  <el-dropdown-item @click.native="statusClick(row, 2, '标记')" v-else>标记异常</el-dropdown-item>
+                  <el-dropdown-item @click.native="updateDayNumClick(row)">刷新统计</el-dropdown-item>
+                  <el-dropdown-item @click.native="showDetailClick(row)" v-if="row.addressId>0" > 地址</el-dropdown-item>
+                  <el-dropdown-item @click.native="showUserPopInfo(row)">用户操作</el-dropdown-item>
+                  <el-dropdown-item @click.native="showDayLimitEdit(row)">修改上限</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </div>
 
-            <el-button
-                type="warning"
-                class="op-btn"
-                plain
-                size="mini"
-                @click="showUserPopInfo(row)"
-            >
-                用户操作
-            </el-button>
 
-            <el-button
-                type="success"
-                class="op-btn"
-                plain
-                size="mini"
-                @click="showDayLimitEdit(row)"
-            >
-                修改上限
-            </el-button>
-            
-            
+
             </template>
         </el-table-column>
         </el-table>
@@ -274,7 +211,7 @@
       />
 
       <v-dialog :visible.sync="showAddressFlag" title="收货地址" width="52%" :destroy-on-close='true'>
-        <el-descriptions title="收货信息" column="2"> 
+        <el-descriptions title="收货信息" column="2">
             <el-descriptions-item label="微信昵称">{{popParams.nickname}}</el-descriptions-item>
             <el-descriptions-item label="中奖结果"><el-tag size="small">{{awardMap[popParams.awardId]?awardMap[popParams.awardId]:'未知'}}</el-tag></el-descriptions-item>
             <el-descriptions-item label="收货人">{{addressInfo.name}}</el-descriptions-item>
@@ -311,7 +248,7 @@
                 {{ statusMap[scope.row[item.key]]? statusMap[scope.row[item.key]]:'未知'}}
             </span>
 
-            
+
             <span v-else-if="item.key=='award'">
                  {{awardMap[scope.row['awardId']]?awardMap[scope.row['awardId']]:'未知'}}
             </span>
@@ -339,7 +276,7 @@
             <el-radio :label="5" disabled>自动异常</el-radio>
           </el-radio-group>
         </el-form-item>
-      
+
         <el-form-item label="弹窗内容：" prop="pop_info" >
           <el-input type="textarea" v-model="popInfoParams.pop_info" style="width:600px;" maxlength="250"
             placeholder='弹窗内容' rows="5" show-word-limit></el-input>
@@ -420,7 +357,7 @@ export default {
         { label: '上次时间', key: 'updateTime' },
         { label: '中奖张数', key: 'num' },
         { label: '是否中奖', key: 'award' },
-        
+
         // { label: '是否中奖', key: 'award' },
         // // { label: '参与人数', key: 'joinCnt' },
         // { label: '开始日期', key: 'start_time' },
@@ -429,12 +366,12 @@ export default {
 
 
       listQuery: {
-        receiptId:0, 
+        receiptId:0,
 
         nickname:'',
         name:'',
         openid:'',
-        mobile:'', 
+        mobile:'',
         chainId:'',
 
         awardId:0,
@@ -559,7 +496,7 @@ export default {
       this.dayNumLoading = true
       this.$http.get(API.receiptUserDayNum+'?receiptId='+this.receiptId+'&openid='+openid).then(res => {
         if (res.code == 200) {
-          
+
           this.dayNumList =Object.entries(res.data).map(([key, value]) => ({
             date: key,
             num: value
@@ -575,7 +512,7 @@ export default {
     viewDayNumClick(row) {
       this.showDayNumFlag = true
       this.dayNumTitle = '【'+row.nickname +'】每天张数统计'
-     
+
 
       this.getDayNum(row.openid)
 
@@ -634,7 +571,7 @@ export default {
         } else {
           this.listQuery.order = (obj.order == 'ascending' ? 3 : 4)
         }
-        
+
       } else if ('create_at' == obj.prop) {
         this.listQuery.order = (obj.order == 'ascending' ? 1 : 2)
       } else if ('errorNum' == obj.prop) {
@@ -730,8 +667,8 @@ export default {
       this.$message.error(parseObj.msg?parseObj.msg:'导出失败')
     };
     return
-    
-          
+
+
         }
         let fileName = decodeURIComponent(res.headers["content-disposition"].split("=")[1])
         if (!res.data) { //data为axios返回的文件流
@@ -747,10 +684,10 @@ export default {
             a.click() //触发下载
             URL.revokeObjectURL(a.href) //释放URL对象
       })
-      
+
     },
 
-    
+
     getList() {
       this.listLoading = true
       this.$http.get(API.receiptUser,{...this.listQuery}).then(res => {
@@ -769,7 +706,7 @@ export default {
         if(valid) {
             this.popInfoLoading = true
             this.$http.post(API.receiptUserPopInfoSave, this.popInfoParams).then(res => {
-                
+
                 if (res.code === 200) {
                     this.$message.success('保存成功')
                     setTimeout(() => {

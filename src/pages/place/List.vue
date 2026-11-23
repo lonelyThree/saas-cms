@@ -1,10 +1,10 @@
 <template>
-  <div class="place-wrap" v-if="showType == 1">
+  <div class="place-wrap cms-list-page" v-if="showType == 1">
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item>渠道管理</el-breadcrumb-item>
     </el-breadcrumb>
     <el-divider></el-divider>
-    <el-card class="box-card" shadow="never">
+    <el-card class="box-card cms-list-filter-card" shadow="never">
         <el-form
         ref="listQuery"
         :model="listQuery"
@@ -17,7 +17,6 @@
           <el-input
             v-model="listQuery.name"
             clearable
-            style="width: 200px;"
             class="filter-item"
             placeholder="请输入渠道名称"
           />
@@ -28,15 +27,13 @@
           <el-input
             v-model="listQuery.place"
             clearable
-            style="width: 200px;"
             class="filter-item"
             placeholder="请输入渠道号"
           />
         </el-form-item>
-        <el-form-item>
+        <el-form-item class="cms-search-actions">
            <el-button
             type="primary"
-            align="right"
             @click="searchForm"
           >
             <i class="el-icon-search" />
@@ -49,13 +46,14 @@
         </el-form>
     </el-card>
 
+    <div class="cms-list-table-card">
     <el-table
       v-loading="listLoading"
       :data="tabList"
       border
       fit
       highlight-current-row
-      :style="{'width': '100%', 'margin-top': '15px'}"
+      :style="{'width': '100%'}"
     >
       <el-table-column
         v-for="(item, index) in tableConfig"
@@ -74,42 +72,32 @@
       <el-table-column
         align="center"
         label="操作"
-        fixed="right"
-        :width="150"
-      >
+        fixed="right" width="160"
+       class-name="operation-cell">
         <template slot-scope="{row}">
-          <el-button
-            type="primary"
-            plain
-            size="mini"
+
+          <div class="operation-actions">
+            <el-button type="text" size="mini" class="op-btn"
             @click="showDetail(row)"
           >
-            编辑
-          </el-button>
-          <el-button
-                type="danger"
-                class="op-btn"
-                plain
-                size="mini"
+              编辑
+            </el-button>
+            <el-button type="text" size="mini" class="op-btn"
                 :loading="openLoading"
                 @click="statusClick(row, 3, '禁用')"
                 v-if="row.status == 1"
               >
-                禁用
-              </el-button>
+              禁用
+            </el-button>
+            <el-dropdown trigger="click">
+              <el-button type="text" size="mini" class="op-btn op-more">更多<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="statusClick(row, 1, '启用')" v-if="row.status != 1">启用</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </div>
 
-              <el-button
-                type="success"
-                class="op-btn"
-                plain
-                size="mini"
-                :loading="openLoading"
-                @click="statusClick(row, 1, '启用')"
-                v-if="row.status != 1"
-              >
-                启用
-              </el-button>
-         
+
         </template>
       </el-table-column>
     </el-table>
@@ -121,6 +109,7 @@
       limit.sync="10"
       @current-change="handleCurrentChange"
     />
+    </div>
   </div>
       <placeEdit
                @backList="BackList"
@@ -151,7 +140,7 @@ export default {
         { label: '渠道号', key: 'place' },
         { label: '更新时间', key: 'update_at' },
       ],
-      
+
       fileList:[],
       listLoading:false,
       showDetailFlag:false,
@@ -161,7 +150,7 @@ export default {
       showType:1,
 
       openLoading:false,
-      
+
     }
   },
   mounted(){
@@ -209,7 +198,7 @@ export default {
        this.listQuery.page = 1
       this.getTabList()
     },
-    
+
 
     getTabList(){
       this.listLoading = true
@@ -274,12 +263,12 @@ export default {
       list-style: disc; margin-left:20px;
       li{ line-height: 26px; font-size:12px;}
     }
-  }  
+  }
   .place-wrap{
     .flex-form{
        .el-form-item__content{display: flex !important;}
     }
-   
+
   }
-  
+
 </style>

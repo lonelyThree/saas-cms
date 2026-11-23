@@ -1,5 +1,5 @@
 <template>
-  <div class="container" v-if="showType == 1">
+  <div class="container place-wrap" v-if="showType == 1">
     <el-form
       class="search-box fs"
       ref="search"
@@ -85,51 +85,29 @@
             <span v-else>{{ scope.row[item.key] }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="200px">
+        <el-table-column label="操作" align="center" width="160" class-name="operation-cell">
           <template slot-scope="scope">
-            <el-button
-                  type="warning"
-                  class="op-btn"  
-                plain
-                size="mini"
+
+            <div class="operation-actions">
+              <el-button type="text" size="mini" class="op-btn"
                 :loading="openLoading"
                  @click="changePwd(scope.row)" style="margin-left: 20px">
-              重置密码
-            </el-button>
-
-            <el-button
-                type="primary"
-                class="op-btn"  
-              plain
-              size="mini"
+                重置密码
+              </el-button>
+              <el-button type="text" size="mini" class="op-btn"
               :loading="openLoading"
               v-if="scope.row.type == 5" @click="showActivityList(scope.row)" >
-              数据权限
-            </el-button>
+                数据权限
+              </el-button>
+              <el-dropdown trigger="click">
+                <el-button type="text" size="mini" class="op-btn op-more">更多<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item @click.native="statusClick(scope.row, 2, '禁用')" v-if="scope.row.status == 1">禁用</el-dropdown-item>
+                  <el-dropdown-item @click.native="statusClick(scope.row, 1, '启用')" v-if="scope.row.status == 2">启用</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </div>
 
-            <el-button
-              type="danger"
-              class="op-btn"
-              plain
-              size="mini"
-              :loading="openLoading"
-              @click="statusClick(scope.row, 2, '禁用')"
-              v-if="scope.row.status == 1"
-            >
-              禁用
-            </el-button>
-
-            <el-button
-              type="success"
-              class="op-btn"
-              plain
-              size="mini"
-              :loading="openLoading"
-              @click="statusClick(scope.row, 1, '启用')"
-              v-if="scope.row.status == 2"
-            >
-              启用
-            </el-button>
 
           </template>
         </el-table-column>
@@ -147,7 +125,7 @@
       >
       </el-pagination>
     </div>
-    
+
 
     <el-dialog
       title="修改密码"
@@ -188,7 +166,7 @@
       :placeMap="placeMap"
       :placeId="placeId"
       :uid = "uid" v-else />
-                   
+
 </template>
 
 <script>
@@ -315,7 +293,7 @@ export default {
     changePwd(row) {
       this.userInfo = row
       this.pwdDialog = true
-      
+
     },
     handleEdit(row) {
       if (row.profileId) {

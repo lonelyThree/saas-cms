@@ -82,26 +82,39 @@
           <span v-else>{{ scope.row[item.key] }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="操作" fixed="right" :width="120">
+      <el-table-column align="center" label="操作" fixed="right" width="160" class-name="operation-cell">
         <template slot-scope="{row}">
 
-          <el-button type="primary" class="op-btn" plain size="mini" @click="showTopicClick(row, 1)">
-            到店表单
-          </el-button>
-          <br />
-          <el-button type="info" v-if="row.leave_at > 0" class="op-btn" size="mini"  @click="showTopicClick(row, 2)">
-            离店表单
-          </el-button>
-          <br />
-
-          <el-button type="warning" class="op-btn" size="mini" v-if="row.award_status == 7" @click="reviewClick(row)">
-            人工审核
-          </el-button>
 
 
-          <el-button type="warning" class="op-btn" size="mini" v-if="row.award_status == 4" @click="sendclick(row)">
-            发放奖励
-          </el-button>
+          <div class="operation-actions">
+
+            <el-button type="text" size="mini" class="op-btn" @click="showTopicClick(row, 1)">
+
+              到店表单
+
+            </el-button>
+
+            <el-button type="text" size="mini" class="op-btn" v-if="row.leave_at > 0" @click="showTopicClick(row, 2)">
+              离店表单
+            </el-button>
+
+            <el-dropdown trigger="click">
+
+              <el-button type="text" size="mini" class="op-btn op-more">更多<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+
+              <el-dropdown-menu slot="dropdown">
+
+                <el-dropdown-item v-if="row.award_status == 7" @click.native="reviewClick(row)">人工审核</el-dropdown-item>
+
+                <el-dropdown-item v-if="row.award_status == 4" @click.native="sendclick(row)">发放奖励</el-dropdown-item>
+
+              </el-dropdown-menu>
+
+            </el-dropdown>
+
+          </div>
+
 
 
 
@@ -134,7 +147,7 @@
               allow-create
               default-first-option
               placeholder="请选择或者输入驳回原因"
-              style="width:600px" 
+              style="width:600px"
               >
               <el-option
                 v-for="item in reasonList"
@@ -174,9 +187,9 @@ export default {
   data() {
     return {
       formLabelWidth: '68px',
-    
+
       awardStatusMap: { '0': '未知',  '2': '未中奖', '3': '待领取', '4': '待发放', '5': '已领取' , '6': '已发放', '7': '待审核', '8' : '审核失败' },
-      awardStatusQuery: [{ id: 0, name: '全部' },  { id: 3, name: '待领取' }, { id: 4, name: '待发放' }, 
+      awardStatusQuery: [{ id: 0, name: '全部' },  { id: 3, name: '待领取' }, { id: 4, name: '待发放' },
         { id: 5, name: '已领取' }, { id: 6, name: '已发放' } , { id: 7, name: '待审核' }, { id: 8, name: '审核失败' }],
       total:0,
       tabList:[],
@@ -192,7 +205,7 @@ export default {
         { label: '手机号', key: 'mobile' },
         { label: '所属企业', key: 'companyName' },
         { label: '二级部门', key: 'companyDepartmentName' },
-        
+
         { label: '打卡门店', key: 'store_name' },
         { label: '到店打卡时间', key: 'arrive_at', width:'140px'},
         { label: '到店距离', key: 'arrive_distance' },
@@ -204,10 +217,10 @@ export default {
         { label: '离店打卡时间', key: 'leave_at' , width:'140px'},
         { label: '离店距离', key: 'leave_distance' },
         { label: '离店状态', key: 'leave_is_normal' },
-      
 
 
-       
+
+
 
 
         { label: '转账批次号', key: 'batch_id' },
@@ -217,8 +230,8 @@ export default {
 
       listQuery: {
         logId:'',
-        counterId:0, 
-        company_id:0, 
+        counterId:0,
+        company_id:0,
         openid:'',
           nickname:'',
           name:'',
@@ -234,7 +247,7 @@ export default {
         limit:20,
 
       },
-      
+
       popReviewTitle:'',
       showReviewPopFlag:false,
       reviewLoading:false,
@@ -245,7 +258,7 @@ export default {
         counterId:0,
         CheckInLogId:0,
         openid:'',
-        
+
         opType:0,
         reason:'',
       },
@@ -380,7 +393,7 @@ export default {
           if (res.code === 200) {
             this.$message.success('发放成功')
             this.getTabList();
-            
+
           } else {
             this.$message.error(res.msg)
           }
@@ -391,10 +404,10 @@ export default {
           message: '已取消'
         });
       });
-      
+
     },
 
-    
+
     reviewClick(row) {
       this.popReviewParams.counterId = row.counter_id
       this.popReviewParams.CheckInLogId = row.id
@@ -412,10 +425,10 @@ export default {
       //     this.$message.error(res.msg)
       //   }
       // })
-      
+
     },
 
-    
+
 
     getList() {
       // console.log(API.receiptReceip, "API.receiptReceip", "getlist")
@@ -490,8 +503,8 @@ export default {
       this.$message.error(parseObj.msg?parseObj.msg:'导出失败')
     };
     return
-    
-          
+
+
         }
         let fileName = decodeURIComponent(res.headers["content-disposition"].split("=")[1])
         if (!res.data) { //data为axios返回的文件流
@@ -507,7 +520,7 @@ export default {
             a.click() //触发下载
             URL.revokeObjectURL(a.href) //释放URL对象
       })
-      
+
     },
   },
 }

@@ -50,8 +50,8 @@
           </el-select>
         </el-form-item>
 
-        
-        
+
+
 
         <!-- <el-form-item label="活动开始时间">
           <el-date-picker
@@ -105,24 +105,24 @@
         :prop="item.key"
       >
       <template slot-scope="scope">
-        <el-image 
+        <el-image
           style="width: 60px; height: 60px"
           :key="scope.row.qr_bg_img"
-          :src="scope.row.qr_bg_img" 
+          :src="scope.row.qr_bg_img"
           :preview-src-list="[scope.row.qr_bg_img]"
           v-if="item.key=='qr_bg_img'">
         </el-image>
-        <el-image 
+        <el-image
           style="width: 60px; height: 60px"
           :key="scope.row.tip_img"
-          :src="scope.row.tip_img" 
+          :src="scope.row.tip_img"
           :preview-src-list="[scope.row.tip_img]"
           v-else-if="item.key == 'tip_img'">
         </el-image>
-        <el-image 
+        <el-image
           style="width: 60px; height: 60px"
           :key="scope.row.wx_work_qr_code"
-          :src="scope.row.wx_work_qr_code" 
+          :src="scope.row.wx_work_qr_code"
           :preview-src-list="[scope.row.wx_work_qr_code]"
           v-else-if="item.key == 'wx_work_qr_code'">
         </el-image>
@@ -142,7 +142,7 @@
                       size="mini"
                       icon="el-icon-document-copy"
                       @click="handleCopy(scope.row.link, $event)"
-                      v-else-if="item.key=='link'" 
+                      v-else-if="item.key=='link'"
                     >
                       复制
     </el-button>
@@ -152,69 +152,55 @@
       <el-table-column
         align="center"
         label="操作"
-        fixed="right"
-        :width="200"
-      >
+        fixed="right" width="160"
+       class-name="operation-cell">
         <template slot-scope="{row}">
- 
-          <el-button
-            type="danger"
-            class="op-btn"
-            plain
-            size="mini"
+
+
+
+          <div class="operation-actions">
+
+            <el-button type="text" size="mini" class="op-btn"
             :loading="openLoading"
             @click="statusClick(row, 3, '下架')"
             v-if="row.status == 1"
           >
-            下架
-          </el-button>
 
-          <el-button
-            type="success"
-            class="op-btn"
-            plain
-            size="mini"
+              下架
+
+            </el-button>
+
+            <el-button type="text" size="mini" class="op-btn"
             :loading="openLoading"
             @click="statusClick(row, 1, '上架')"
             v-if="row.status == 2 || row.status == 3"
           >
-            上架
-          </el-button>
 
-          <el-button
-            type="primary"
-            class="op-btn"
-            plain
-            size="mini"
-            :loading="openLoading"
-            v-if="rollType == 1 || rollType == 2"
-            @click="editClick(row)"
-          >
-            编辑
-          </el-button>
-         
+              上架
 
-           <el-button
-              type="warning"
-              class="op-btn"
-              plain
-              size="mini"
-              @click="showSalesManClick(row)"
-            >
-              业务员
             </el-button>
-         
-            <el-button
-                type="primary"
-                class="op-btn"
-                plain
-                size="mini"
-                @click="showUserClick(row)"
-                :loading="openLoading"
-              >
-                店员
-              </el-button>
-        
+
+            <el-button type="text" size="mini" class="op-btn" v-if="rollType == 1 || rollType == 2" @click="editClick(row)">
+              编辑
+            </el-button>
+
+            <el-dropdown trigger="click">
+
+              <el-button type="text" size="mini" class="op-btn op-more">更多<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+
+              <el-dropdown-menu slot="dropdown">
+
+                <el-dropdown-item @click.native="showSalesManClick(row)">业务员</el-dropdown-item>
+
+                <el-dropdown-item @click.native="showUserClick(row)">店员</el-dropdown-item>
+
+              </el-dropdown-menu>
+
+            </el-dropdown>
+
+          </div>
+
+
 
         </template>
       </el-table-column>
@@ -300,7 +286,7 @@ export default {
         { label: '企微好友码', key: 'wx_work_qr_code', width:'100px' },
         { label: '更新时间', key: 'time' },
       ],
-      
+
       fileList:[],
       fileTipList:[],
       listLoading:false,
@@ -368,7 +354,7 @@ export default {
     showSalesManClick(row) {
       this.$router.push({ path: '/fans/salesManList',  query:{activityId:row.id,activityName:row.title,placeId:row.place_id}})
     },
-    
+
     statusClick(row, status, tip) {
       this.$confirm('此操作将'+tip+'活动, 是否继续?', '提示', {
         confirmButtonText: tip,
@@ -394,10 +380,10 @@ export default {
         this.$message({
           type: 'info',
           message: '已取消'
-        });          
+        });
       });
-        
-        
+
+
     },
     BackList() {
       this.showType = 1
@@ -455,7 +441,7 @@ export default {
       this.currentDate = date.getFullYear() * 10000 + (date.getMonth() + 1)*100 + date.getDate()
       if (this.searchTime && this.searchTime.length == 2) {
         this.listQuery.startTime = this.searchTime[0] / 1000
-        this.listQuery.endTime = this.searchTime[1] / 1000 
+        this.listQuery.endTime = this.searchTime[1] / 1000
       }
       this.listLoading = true
       this.$http.get(API.inviteActivityList,{...this.listQuery}).then(res => {
@@ -469,7 +455,7 @@ export default {
         }
       })
     },
-    
+
      handleCurrentChange(page){
       this.listQuery.page = page
       this.getTabList()
@@ -491,12 +477,12 @@ export default {
       list-style: disc; margin-left:20px;
       li{ line-height: 26px; font-size:12px;}
     }
-  }  
+  }
   .place-wrap{
     .flex-form{
        .el-form-item__content{display: flex !important;}
     }
-   
+
   }
-  
+
 </style>

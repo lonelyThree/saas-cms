@@ -50,8 +50,8 @@
           </el-select>
         </el-form-item>
 
-        
-        
+
+
 
 
         <el-form-item>
@@ -105,57 +105,50 @@
       <el-table-column
         align="center"
         label="操作"
-        fixed="right"
-        :width="200"
-      >
+        fixed="right" width="160"
+       class-name="operation-cell">
         <template slot-scope="{row}">
- 
-          <el-button
-            type="danger"
-            class="op-btn"
-            plain
-            size="mini"
+
+
+
+          <div class="operation-actions">
+
+            <el-button type="text" size="mini" class="op-btn"
             :loading="openLoading"
             @click="statusClick(row, 2, '下架')"
             v-if="row.status == 1 || row.status == 9"
           >
-            下架
-          </el-button>
 
-          <el-button
-            type="primary"
-            class="op-btn"
-            plain
-            size="mini"
+              下架
+
+            </el-button>
+
+            <el-button type="text" size="mini" class="op-btn"
             :loading="openLoading"
             v-if="rollType == 1 || rollType == 2"
             @click="editClick(row)"
           >
-            编辑
-          </el-button>
-          <el-button
-            type="success"
-            class="op-btn"
-            plain
-            size="mini"
-            :loading="openLoading"
-            @click="statusClick(row, 1, '上架')"
-            v-if="row.status == 2"
-          >
-            上架
-          </el-button>
 
-          <el-button
-            type="warnging"
-            class="op-btn"
-            plain
-            size="mini"
-            :loading="openLoading"
-            @click="statusClick(row, 9, '废弃')"
-            v-if="row.status == 1 || row.status == 2"
-          >
-            废弃
-          </el-button>
+              编辑
+
+            </el-button>
+
+            <el-dropdown trigger="click">
+
+              <el-button type="text" size="mini" class="op-btn op-more">更多<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+
+              <el-dropdown-menu slot="dropdown">
+
+                <el-dropdown-item @click.native="statusClick(row, 1, '上架')" v-if="row.status == 2">上架</el-dropdown-item>
+
+                <el-dropdown-item @click.native="statusClick(row, 9, '废弃')" v-if="row.status == 1 || row.status == 2">废弃</el-dropdown-item>
+
+              </el-dropdown-menu>
+
+            </el-dropdown>
+
+          </div>
+
         </template>
       </el-table-column>
     </el-table>
@@ -188,7 +181,7 @@ import vDialog from '../../components/Dialog/dialog.vue'
 export default {
   data(){
     return {
-      showType:1, // 1 列表  2 添加/编辑活动 
+      showType:1, // 1 列表  2 添加/编辑活动
 
       record:false,
       recipe:false,
@@ -231,7 +224,7 @@ export default {
         { label: '排序', key: 'sort' },
         { label: '更新时间', key: 'time' },
       ],
-      
+
       fileList:[],
       fileTipList:[],
       listLoading:false,
@@ -271,7 +264,7 @@ export default {
         this.fileTipList = []
         this.showType = 2
     },
-    
+
     editClick(row) {
         this.popTitle = "编辑【药企】【"+(this.placeMap[row.place_id]?this.placeMap[row.place_id]:'渠道')+"】【"+row.name+"】"
         this.popParams = row
@@ -280,7 +273,7 @@ export default {
         this.fileList.push({'url':row.img})
         this.showType = 2
     },
-  
+
     statusClick(row, status, tip) {
       this.$confirm('此操作将'+tip+'药企, 是否继续?', '提示', {
         confirmButtonText: tip,
@@ -306,10 +299,10 @@ export default {
         this.$message({
           type: 'info',
           message: '已取消'
-        });          
+        });
       });
-        
-        
+
+
     },
     BackList() {
       this.showType = 1
@@ -354,12 +347,12 @@ export default {
         }
       })
     },
-    
+
     searchForm(){
       this.listQuery.page = 1
       this.getTabList()
     },
-    
+
 
     getTabList(){
       this.listLoading = true
@@ -374,7 +367,7 @@ export default {
         }
       })
     },
-   
+
      handleCurrentChange(page){
       this.listQuery.page = page
       this.getTabList()
@@ -396,12 +389,12 @@ export default {
       list-style: disc; margin-left:20px;
       li{ line-height: 26px; font-size:12px;}
     }
-  }  
+  }
   .place-wrap{
     .flex-form{
        .el-form-item__content{display: flex !important;}
     }
-   
+
   }
-  
+
 </style>

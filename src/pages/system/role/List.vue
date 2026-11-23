@@ -1,5 +1,5 @@
 <template>
-  <div class="container role-container">
+  <div class="container role-container place-wrap">
     <div class="table-box">
       <el-row
         type="flex"

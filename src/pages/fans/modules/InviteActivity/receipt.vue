@@ -97,38 +97,47 @@
           <span v-else>{{ scope.row[item.key] }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="操作" fixed="right" :width="150">
+      <el-table-column align="center" label="操作" fixed="right" width="160" class-name="operation-cell">
         <template slot-scope="{row}">
 
-          <el-button type="primary" class="op-btn" plain size="mini" @click="showImgClick(row)">
-            小票
-          </el-button>
-          <el-button type="info" class="op-btn" size="mini" @click="viewUserClick(row)">
-            用户
-          </el-button>
 
 
-          <el-button type="warning" class="op-btn" size="mini" v-if="row.award_status == 7"
-            @click="reviewClick(row, 2)">
-            红包审核
-          </el-button>
+          <div class="operation-actions">
 
-          <el-button type="warning" class="op-btn" size="mini" v-else-if="row.status == 3" @click="reviewClick(row,1)">
-            人工审核
-          </el-button>
+            <el-button type="text" size="mini" class="op-btn" @click="showImgClick(row)">
 
-          <el-button type="warning" class="op-btn" size="mini" v-else-if="row.status == 1 || row.status == 4" @click="showTimeEditClick(row)">
-            修改消费日期
-          </el-button>
+              小票
 
-          <el-button type="success" class="op-btn" plain size="mini" v-if="row.products" @click="showProsClick(row)">
-            产品消息
-          </el-button>
-          
+            </el-button>
 
-          <el-button type="warning" class="op-btn" size="mini" v-if="popParams.type == 2 && row.warehouse_status == 1" @click="insertClick(row,1)">
-            入库
-          </el-button>
+            <el-button type="text" size="mini" class="op-btn" @click="viewUserClick(row)">
+
+              用户
+
+            </el-button>
+
+            <el-dropdown trigger="click">
+
+              <el-button type="text" size="mini" class="op-btn op-more">更多<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+
+              <el-dropdown-menu slot="dropdown">
+
+                <el-dropdown-item v-if="row.award_status == 7" @click.native="reviewClick(row, 2)">红包审核</el-dropdown-item>
+
+                <el-dropdown-item v-else-if="row.status == 3" @click.native="reviewClick(row,1)">人工审核</el-dropdown-item>
+
+                <el-dropdown-item v-else-if="row.status == 1 || row.status == 4" @click.native="showTimeEditClick(row)">修改消费日期</el-dropdown-item>
+
+                <el-dropdown-item v-if="row.products" @click.native="showProsClick(row)">产品消息</el-dropdown-item>
+
+                <el-dropdown-item v-if="popParams.type == 2 && row.warehouse_status == 1" @click.native="insertClick(row,1)">入库</el-dropdown-item>
+
+              </el-dropdown-menu>
+
+            </el-dropdown>
+
+          </div>
+
 
 
 
@@ -176,7 +185,7 @@
               allow-create
               default-first-option
               placeholder="请选择或者输入驳回原因"
-              style="width:600px" 
+              style="width:600px"
               >
               <el-option
                 v-for="item in reasonList"
@@ -265,14 +274,14 @@ export default {
       formLabelWidth: '68px',
       userStatusMap:{0:'未知',1:'正常',2:'人工疑似',3:'自动疑似',4:'人工异常',5:'自动异常'},
       statusMap:{'0':'','1':'自动审核成功', '2': '自动审核失败' , '3': '人工审核待处理' , '4': '人工审核成功' , '5': '人工审核失败'  },
-     
+
       statusQuery:[{id:0, name:'全部'},{id:1, name:'自动审核成功'}, { id: 2, name: '自动审核失败' }, { id: 3, name: '人工审核待处理' }, { id: 4, name: '人工审核成功' }, { id: 5, name: '人工审核失败' }],
 
       failTypeMap: { '0': '', '1': '小票识别失败', '2': '小票内容为空', '3': '小票多于一张', '4': '小票单号识别失败', '5': '小票单号重复', '6': '连锁为空或者不匹配', '7': '产品不匹配', '8': '未在活动期间', '14': '单号或者消费日期为空', '15': '小票长度不符合', '16':'小票超出限定日期', '17':'小票超出个人限额', '18':'小票超出每次限额', '19' :'小票超出连锁限制', '20':'用户异常'},
 
       awardStatusMap: { '0': '未知',  '2': '未中奖', '3': '待领取', '4': '待发放', '5': '已领取' , '6': '已发放', '7': '待审核' },
       awardStatusQuery: [{ id: 0, name: '全部' }, { id: 2, name: '未中奖' }, { id: 3, name: '待领取' }, { id: 4, name: '待发放' }, { id: 5, name: '已领取' }, { id: 6, name: '已发放' } , { id: 7, name: '待审核' }],
-      
+
 
       total:0,
       tabList:[],
@@ -284,7 +293,7 @@ export default {
         { label: '金额(分)', key: 'money', width: '100px', sortable:'custom' },
         { label: '审核状态', key: 'status' },
 
-        
+
         { label: '领奖状态', key: 'award_status' },
 
         { label: '店员姓名', key: 'username' },
@@ -305,7 +314,7 @@ export default {
 
       listQuery: {
         logId:'',
-        receiptId:0, 
+        receiptId:0,
         openid:'',
         status:0,
         awardStatus:0,
@@ -327,7 +336,7 @@ export default {
       ],
 
       popInsertParams:{},
-      
+
       popReviewTitle:'',
       showReviewPopFlag:false,
       reviewLoading:false,
@@ -627,7 +636,7 @@ export default {
       //     this.$message.error(res.msg)
       //   }
       // })
-      
+
     },
 
     reviewClick(row, type) {
@@ -650,10 +659,10 @@ export default {
       //     this.$message.error(res.msg)
       //   }
       // })
-      
+
     },
 
-    
+
 
     showProsClick(row){
         this.popParams = row.products

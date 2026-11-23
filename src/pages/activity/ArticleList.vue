@@ -50,8 +50,8 @@
           </el-select>
         </el-form-item>
 
-        
-        
+
+
 
         <!-- <el-form-item label="活动开始时间">
           <el-date-picker
@@ -119,7 +119,7 @@
         <span v-else-if="item.key=='money'">{{ scope.row['money']}}分</span>
         <span v-else-if="item.key=='date'">{{ scope.row['start_date'] | date2Format}}到{{ scope.row['end_date']  | date2Format}}</span>
         <span v-else-if="item.key=='limit_money'">{{ scope.row.limit_money }} / {{  (scope.row.award_type != 1  || scope.row.receive_date == currentDate)? scope.row.receive_money :0 }}</span>
-        
+
         <span v-else-if="item.key=='time' && scope.row.update_at">{{ scope.row.update_at * 1000, 3 | dateFormat}}</span>
 
             <span v-else-if="item.key=='time'">{{ scope.row.create_at * 1000, 3 | dateFormat}}</span>
@@ -129,7 +129,7 @@
                       size="mini"
                       icon="el-icon-document-copy"
                       @click="handleCopy(scope.row.link, $event)"
-                      v-else-if="item.key=='link'" 
+                      v-else-if="item.key=='link'"
                     >
                       复制
     </el-button>
@@ -137,7 +137,7 @@
                         size="mini"
                         icon="el-icon-document-copy"
                         @click="handleCopy(scope.row.article_url, $event)"
-                        v-else-if="item.key == 'article_url'" 
+                        v-else-if="item.key == 'article_url'"
                       >
                         复制
       </el-button>
@@ -147,71 +147,56 @@
       <el-table-column
         align="center"
         label="操作"
-        fixed="right"
-        :width="200"
-      >
+        fixed="right" width="160"
+       class-name="operation-cell">
         <template slot-scope="{row}">
- 
-          <el-button
-            type="danger"
-            class="op-btn"
-            plain
-            size="mini"
+
+
+
+          <div class="operation-actions">
+
+            <el-button type="text" size="mini" class="op-btn"
             :loading="openLoading"
             @click="statusClick(row, 3, '下架')"
             v-if="row.status == 1"
           >
-            下架
-          </el-button>
 
-          <el-button
-            type="primary"
-            class="op-btn"
-            plain
-            size="mini"
+              下架
+
+            </el-button>
+
+            <el-button type="text" size="mini" class="op-btn"
             :loading="openLoading"
             v-if="rollType == 1 || rollType == 2"
             @click="editClick(row)"
           >
-            编辑
-          </el-button>
-          <el-button
-            type="success"
-            class="op-btn"
-            plain
-            size="mini"
-            :loading="openLoading"
-            @click="statusClick(row, 1, '上架')"
-            v-if="row.status == 2 || row.status == 3"
-          >
-            上架
-          </el-button>
 
-           <el-button
-              type="warning"
-              class="op-btn"
-              plain
-              size="mini"
-              v-if="row.status != 2"
-              @click="showUserClick(row)"
-            >
-              人员统计
+              编辑
+
             </el-button>
 
-            <el-button
-              type="primary"
-              class="op-btn"
-              plain
-              size="mini"
-              v-if="row.status != 2"
-              @click="showLogClick(row)"
-            >
-              分享记录
-            </el-button>
-         
-  
+            <el-dropdown trigger="click">
 
-      
+              <el-button type="text" size="mini" class="op-btn op-more">更多<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+
+              <el-dropdown-menu slot="dropdown">
+
+                <el-dropdown-item @click.native="statusClick(row, 1, '上架')" v-if="row.status == 2 || row.status == 3">上架</el-dropdown-item>
+
+                <el-dropdown-item v-if="row.status != 2" @click.native="showUserClick(row)">人员统计</el-dropdown-item>
+
+                <el-dropdown-item v-if="row.status != 2" @click.native="showLogClick(row)">分享记录</el-dropdown-item>
+
+              </el-dropdown-menu>
+
+            </el-dropdown>
+
+          </div>
+
+
+
+
+
         </template>
       </el-table-column>
     </el-table>
@@ -267,7 +252,7 @@ import vDialog from './dialog.vue'
 export default {
   data(){
     return {
-      showType:1, // 1 列表  2 添加/编辑活动 3 记录管理 4 白名单管理 5 连锁管理 6 区域管理 7 参与人员管理 
+      showType:1, // 1 列表  2 添加/编辑活动 3 记录管理 4 白名单管理 5 连锁管理 6 区域管理 7 参与人员管理
 
       record:false,
       recipe:false,
@@ -327,7 +312,7 @@ export default {
         { label: '活动地址', key: 'link' },
         { label: '更新时间', key: 'time' },
       ],
-      
+
       fileList:[],
       fileTipList:[],
       listLoading:false,
@@ -428,13 +413,13 @@ export default {
       this.popId = obj.popParams.id
       this.showOpenid = obj.openid
       this.showType = 3
-    },    
+    },
     showQuestionClick(row) {
       this.askRankId = row.id
       this.askRankName = row.title
       this.placeName = this.placeMap[row.place_id]?this.placeMap[row.place_id]:'渠道'
       this.showType = 3
-      
+
     },
     statusClick(row, status, tip) {
       this.$confirm('此操作将'+tip+'活动, 是否继续?', '提示', {
@@ -461,10 +446,10 @@ export default {
         this.$message({
           type: 'info',
           message: '已取消'
-        });          
+        });
       });
-        
-        
+
+
     },
     BackList() {
       console.log("BackList", "BackList[[[]]]")
@@ -510,19 +495,19 @@ export default {
         }
       })
     },
-    
+
     searchForm(){
       this.listQuery.page = 1
       this.getTabList()
     },
-    
+
 
     getTabList(){
       let date = new Date()
       this.currentDate = date.getFullYear() * 10000 + (date.getMonth() + 1)*100 + date.getDate()
       if (this.searchTime && this.searchTime.length == 2) {
         this.listQuery.startTime = this.searchTime[0] / 1000
-        this.listQuery.endTime = this.searchTime[1] / 1000 
+        this.listQuery.endTime = this.searchTime[1] / 1000
       }
       this.listLoading = true
       this.$http.get(API.articleList,{...this.listQuery}).then(res => {
@@ -536,7 +521,7 @@ export default {
         }
       })
     },
-   
+
      handleCurrentChange(page){
       this.listQuery.page = page
       this.getTabList()
@@ -558,12 +543,12 @@ export default {
       list-style: disc; margin-left:20px;
       li{ line-height: 26px; font-size:12px;}
     }
-  }  
+  }
   .place-wrap{
     .flex-form{
        .el-form-item__content{display: flex !important;}
     }
-   
+
   }
-  
+
 </style>
