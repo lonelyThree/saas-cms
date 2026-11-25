@@ -189,7 +189,6 @@ export default {
 
   created() {
     // console.log(this.$store.state.menu.menu)
-    console.log(this.menuList, this.$route.path)
   },
   beforeDestroy() {
     if (this.logoutTimer) {
@@ -212,19 +211,22 @@ export default {
           return this.$http
             .get(API.logout)
             .then(res => {
-              if (res.code == 200) {
-                this.$storage.remove('PE_USER_INFO')
-                this.clearMenuList()
-                this.$router.push({ name: 'Login' })
-                this.$message.success('退出登录成功')
-              } else {
+              if (res.code !== 200) {
                 this.$message.error(res.msg || res.message || '退出失败')
+                return
               }
+              this.$message.success('退出登录成功')
             })
             .catch(() => {
-              this.$message.error('退出请求失败，请稍后重试')
+              this.$message.warning('退出请求失败，已清除本地登录状态')
             })
             .then(() => {
+              this.$storage.remove('PE_USER_INFO')
+              this.clearMenuList()
+              const navigation = this.$router.push({ name: 'Login' })
+              if (navigation && typeof navigation.catch === 'function') {
+                navigation.catch(() => {})
+              }
               loadingInstance.close()
             })
         })
@@ -253,11 +255,18 @@ export default {
                   this.logoutTimer = null
                   this.$storage.remove('PE_USER_INFO')
                   this.clearMenuList()
-                  this.$router.push({ name: 'Login' })
+                  const navigation = this.$router.push({ name: 'Login' })
+                  if (navigation && typeof navigation.catch === 'function') {
+                    navigation.catch(() => {})
+                  }
                 }, 500)
               } else {
                 this.$message.error(res.msg || res.message || '修改密码失败')
               }
+            })
+            .catch(() => {
+              this.modifyPasswordDialogConfirmBtnLoading = false
+              this.$message.error('修改密码请求失败，请稍后重试')
             })
         } else {
           this.$message.error('请检查表单填写是否正确')

@@ -28,22 +28,32 @@ function clearSession() {
 }
 
 function normalizeError(error) {
+    if (error && (error.code === 'ERR_CANCELED' || error.name === 'CanceledError')) {
+        return error
+    }
     const response = error && error.response
     const status = response && response.status
-    if (status === 401 || status === 403) {
+    if (status === 401) {
         clearSession()
     }
     const data = response && response.data
     const msg = (data && (data.msg || data.message)) || (error && error.message) || '网络异常，请稍后重试'
-    return { code: status || -1, status, msg, data }
+    return {
+        code: (error && error.code) || status || -1,
+        status,
+        name: error && error.name,
+        msg,
+        data,
+    }
 }
 
 function isApiRequest(requestConfig) {
     const url = requestConfig.url || ''
-    if (url.charAt(0) === '/') return true
     try {
         const base = typeof window !== 'undefined' ? window.location.href : 'http://localhost/'
         const target = new URL(url, base)
+        const localOrigin = new URL(base).origin
+        if (target.origin === localOrigin) return true
         const apiDomain = config.URL && config.URL.domain
         if (!apiDomain) return false
         return target.origin === new URL(apiDomain).origin
@@ -115,14 +125,14 @@ function parseBlobResponse(res) {
     })
 }
 
-var post = (url, data) => {
+var post = (url, data, requestConfig) => {
     const invalid = requireUrl(url)
     if (invalid) return invalid
-    return http({
+    return http(Object.assign({}, requestConfig || {}, {
         method: 'post',
         url: url,
         data: data,
-    }).then(res => processResponse(res))
+    })).then(res => processResponse(res))
 }
 
 var get = (url, params, requestConfig) => {
@@ -135,15 +145,19 @@ var get = (url, params, requestConfig) => {
     })).then(res => processResponse(res))
 }
 
-var postForm = (url, data) => {
+var postForm = (url, data, requestConfig) => {
     const invalid = requireUrl(url)
     if (invalid) return invalid
-    return http({
+    const options = requestConfig || {}
+    return http(Object.assign({}, options, {
         method: 'post',
         url: url,
         data: qs.stringify(data),
-        headers: { 'content-type': 'application/x-www-form-urlencoded' },
-    }).then(res => processResponse(res))
+        headers: Object.assign(
+            { 'content-type': 'application/x-www-form-urlencoded' },
+            options.headers || {}
+        ),
+    })).then(res => processResponse(res))
 }
 
 var download = (url, params) => {
@@ -169,12 +183,15 @@ var uploadImage = file => {
     if (!ext) {
         return Promise.reject(new Error('不支持的图片格式'))
     }
+    if (file.size > 5 * 1024 * 1024) {
+        return Promise.reject(new Error('图片大小不能超过 5MB'))
+    }
     return get(config.API.getPolicyToken).then(res => {
-        if (res.code != 200 || !res.data) {
+        if (res.code !== 200 || !res.data) {
             throw new Error(res.msg || res.message || '获取上传凭证失败')
         }
         const token = res.data
-        const fileName = new Date().getTime() + '.' + ext
+        const fileName = new Date().getTime() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext
         const key = token.dir + fileName
         const formData = new FormData()
         formData.append('x-oss-forbid-overwrite', true)
@@ -185,7 +202,12 @@ var uploadImage = file => {
         formData.append('success_action_status', '200')
         formData.append('callback', token.callback)
         formData.append('file', file, fileName)
-        return post(token.host, formData).then(() => token.url + '/' + key)
+        return post(token.host, formData).then(callbackRes => {
+            if (!callbackRes || callbackRes.code !== 200) {
+                throw new Error(callbackRes && callbackRes.msg ? callbackRes.msg : '上传回调失败')
+            }
+            return token.url + '/' + key
+        })
     })
 }
 

@@ -57,7 +57,7 @@ var obj = [
                 component: () => import('@/pages/activity/VoteList'),
                 meta: {
                     title: '投票活动',
-                    code: 'articleList',
+                    code: 'voteList',
                 },
             },
             {

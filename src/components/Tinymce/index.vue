@@ -38,12 +38,7 @@ export default {
     id: {
       type: String,
       default: function() {
-        // return (
-        //   'vue-tinymce-' +
-        //   +new Date() +
-        //   ((Math.random() * 1000).toFixed(0) + '')
-        // )
-        return 'tinymc-cms-pharmacy-enterprise'
+        return 'vue-tinymce-' + this._uid
       },
     },
     value: {
@@ -105,8 +100,8 @@ export default {
       // console.log(this.hasChange, this.hasInit)
       if (!this.hasChange && this.hasInit) {
         this.$nextTick(() => {
-          // console.log('nexttick')
-          window.tinymce.get(this.tinymceId).setContent(val || '')
+          const editor = window.tinymce && window.tinymce.get && window.tinymce.get(this.tinymceId)
+          if (editor) editor.setContent(val || '')
         })
       }
     },

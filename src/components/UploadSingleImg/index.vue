@@ -135,7 +135,7 @@ export default {
             var fileUrl = this.aliyunOssToken.host + '/' + filePath
 
             this.$http.post(url, formData, {}).then(res => {
-                if (res.code === 200 || res.code == 1000) {
+                if (res && res.code === 200) {
 
                     this.$emit('selectImg', {name: this.uploadName, url: filePath })
 
@@ -144,7 +144,7 @@ export default {
                     this.$message.success('图片上传成功')
                 } else {
                     // console.log(res)
-                    this.$message.error(res.data.msg ? res.data.msg : '图片上传失败');
+                    this.$message.error((res && res.msg) ? res.msg : '图片上传失败');
                     // self.prevent = false;
                 }
             })

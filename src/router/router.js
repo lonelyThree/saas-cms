@@ -98,10 +98,19 @@ router.beforeEach((to, from, next) => {
     next()
 })
 
-let reloadAttempts = 0
-router.onError(() => {
-    if (reloadAttempts >= 1) return
-    reloadAttempts += 1
+router.onError(error => {
+    const isChunkError = error && (
+        error.name === 'ChunkLoadError' ||
+        /Loading chunk .* failed/.test(error.message || '')
+    )
+    if (!isChunkError) return
+    const reloadKey = 'cms_router_reload_count'
+    const count = Number(window.sessionStorage.getItem(reloadKey) || 0)
+    if (count >= 1) {
+        window.sessionStorage.removeItem(reloadKey)
+        return
+    }
+    window.sessionStorage.setItem(reloadKey, String(count + 1))
     window.location.reload()
 })
 export default router

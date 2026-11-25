@@ -46,21 +46,15 @@ export default {
     window.removeEventListener('keydown', this.handleKeyDown, true)
   },
   methods: {
-    handleKeyDown(e){
-      let key = null;
-      if (window.event === undefined) {
-        key = e.keyCode;
-      } else {
-        key = window.event.keyCode;
-      }
-      if (key === 13) {
-        //触发的事件
-        this.login();
+    handleKeyDown(e) {
+      if (e.key === 'Enter' || e.keyCode === 13) {
+        this.login()
       }
     },
     login() {
-      if (this.account == '') return this.$message.error('请填写用户名')
-      if (this.password == '') return this.$message.error('请填写密码')
+      if (this.loginLoading) return
+      if (this.account.trim() === '') return this.$message.error('请填写用户名')
+      if (this.password === '') return this.$message.error('请填写密码')
       this.loginLoading = true
       this.$http
         .post(API.login, {
@@ -68,22 +62,30 @@ export default {
           password: this.password,
         })
         .then(res => {
-          if (res.code != 200) {
+          if (res.code !== 200) {
             this.loginLoading = false
             this.$message.error(res.msg || res.message || '登录失败')
             return
           }
+          const token = res.data && res.data.info && res.data.info.token
+          if (!token) {
+            this.loginLoading = false
+            this.$message.error('登录响应缺少 token，请稍后重试')
+            return
+          }
           this.$http
-            .get(API.getMenuList)
+            .get(API.getMenuList, null, { headers: { token } })
             .then(menuRes => {
               this.loginLoading = false
-              if (menuRes.code != 200) {
+              if (menuRes.code !== 200) {
                 this.$message.error(menuRes.msg || menuRes.message || '获取菜单失败')
                 return
               }
-              const userInfo = Object.assign({}, res.data, {
-                menuList: Array.isArray(menuRes.data) ? menuRes.data : [],
-              })
+              if (!Array.isArray(menuRes.data)) {
+                this.$message.error('菜单数据格式异常')
+                return
+              }
+              const userInfo = Object.assign({}, res.data, { menuList: menuRes.data })
               this.$storage.set('PE_USER_INFO', userInfo)
               this.$store.dispatch('setMenuList')
               this.$router.push({ name: 'Index' })

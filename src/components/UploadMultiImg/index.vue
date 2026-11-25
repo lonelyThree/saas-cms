@@ -99,8 +99,6 @@ export default {
             imgUrlList.push({url:url})
         });
         this.imgUrlList = imgUrlList
-        
-        console.log("getOssToken", this.initOssToken)
 
         this.aliyunOssToken = this.ossToken
         if(this.initOssToken) {
@@ -167,7 +165,6 @@ export default {
             this.$emit('selectMultiImg', { name: this.uploadName, url: '', urls:urls })
         },
         onChange(file, fileList) {
-            console.log("onChange", file, fileList)
         },
 
         getOssToken(param) {
@@ -209,9 +206,7 @@ export default {
             var fileUrl = this.aliyunOssToken.url + '/' + filePath
 
             this.$http.post(url, formData, {}).then(res => {
-                if (res.code === 200 || res.code == 1000) {
-                    console.log("uploadFile", res)
-
+                if (res && res.code === 200) {
                     this.$emit('selectMultiImg', {name: this.uploadName, url: fileUrl })
 
                     // console.log(res.code, res, "res.code", fileUrl)
@@ -219,7 +214,7 @@ export default {
                     this.$message.success('图片上传成功')
                 } else {
                     // console.log(res)
-                    this.$message.error(res.data.msg ? res.data.msg : '图片上传失败');
+                    this.$message.error((res && res.msg) ? res.msg : '图片上传失败');
                     // self.prevent = false;
                 }
             })
@@ -229,7 +224,6 @@ export default {
                 });
         },
         uploadSectionFile(param) {
-            console.log("uploadSectionFile", param)
             if (!this.aliyunOssToken  || !this.aliyunOssToken.expire  || this.aliyunOssToken.expire * 1000 < new Date().getTime()) {
                 this.getOssToken(param)
                 return
