@@ -169,7 +169,7 @@
   </div>
     <companyActivityEdit
            @backList="BackList"
-           :popParams="popParams"
+           :sourceParams="popParams"
            :popTitle="popTitle"
            :incomePlaceList="incomePlaceList"
            :fileList="fileList"
@@ -177,13 +177,13 @@
             v-else-if="showType == 2" />
     <companyActivityActivity
            @backList="BackList"
-           :popParams="popParams"
+           :sourceParams="popParams"
            :popTitle="popTitle"
            :incomePlaceList="incomePlaceList"
            v-else-if="showType == 3" />
     <companyActivityUniversity
            @backList="BackList"
-           :popParams="popParams"
+           :sourceParams="popParams"
            :popTitle="popTitle"
            :incomePlaceList="incomePlaceList"
            v-else-if="showType == 4" />

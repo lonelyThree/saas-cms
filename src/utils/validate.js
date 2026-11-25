@@ -13,7 +13,7 @@ export const isArray = (arg) => {
  * @param {*} s
  */
 export function isValidPhone(s) {
-  return /^1[3|4|5|7|8][0-9]\d{8}$/.test(s)
+  return /^1[3-9]\d{9}$/.test(s)
 }
 
 /**
@@ -29,7 +29,7 @@ export function isValidPassword(s) {
  * @param {*} s
  */
 export function isValidEmail(s) {
-  return /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((.[a-zA-Z0-9_-]{2,3}){1,2})$/.test(s)
+  return /^[\w.-]+@[\w-]+(\.[\w-]+)+$/.test(s)
 }
 
 export const validPhone = (rule, value, callback) => {
@@ -54,7 +54,6 @@ export const validRequiedPhone = (rule, value, callback) => {
   }
 }
 export const validEmail = (rule, value, callback) => {
-  console.log(rule, value, "validEmail")
   if (!value) {
     callback(new Error('请输入邮箱'))
   } else if (!isValidEmail(value)) {
@@ -80,10 +79,33 @@ export const validatorFn = (args) => {
       callback(new Error(nullMsg))
     } else if (!required && !value) {
       callback()
-    } else if (!validateFn(value)) {
+    } else if (typeof validateFn !== 'function' || !validateFn(value)) {
       callback(new Error(errorMsg))
     } else {
       callback()
     }
   }
+}
+
+export function sanitizeHtml(html) {
+  if (!html) return ''
+  if (typeof DOMParser === 'undefined') {
+    return String(html).replace(/<[^>]*>/g, '')
+  }
+  const doc = new DOMParser().parseFromString(String(html), 'text/html')
+  const forbidden = ['script', 'style', 'iframe', 'object', 'embed', 'link', 'meta', 'base', 'form']
+  doc.querySelectorAll(forbidden.join(',')).forEach(el => el.remove())
+  doc.querySelectorAll('*').forEach(el => {
+    Array.from(el.attributes).forEach(attr => {
+      const name = attr.name.toLowerCase()
+      const value = attr.value.trim().toLowerCase()
+      const isEvent = name.indexOf('on') === 0
+      const isDangerousUrl = ['href', 'src', 'srcdoc', 'data'].indexOf(name) !== -1 &&
+        (value.indexOf('javascript:') === 0 || value.indexOf('data:text/html') === 0)
+      if (isEvent || isDangerousUrl) {
+        el.removeAttribute(attr.name)
+      }
+    })
+  })
+  return doc.body.innerHTML
 }

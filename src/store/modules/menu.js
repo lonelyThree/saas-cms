@@ -12,32 +12,32 @@ const getters = {
 const mutations = {
     setMenu(state) {
         state.menu = []
-        // var permissionsArr = $storage.get('PE_USER_INFO').permissions.split('|')
-        var permissionsArr = $storage.get('PE_USER_INFO').menuList
-        var temp = []
+        const user = $storage.get('PE_USER_INFO')
+        const menuList = user && user.menuList
+        let permissionsArr = []
+        if (Array.isArray(menuList)) {
+            permissionsArr = menuList
+        } else if (typeof menuList === 'string') {
+            permissionsArr = menuList.split('|')
+        }
+        const temp = []
         appRouter.forEach(el => {
-            if (el.meta && el.meta.code) {
-                if (permissionsArr.includes(el.meta.code)) {
-                    var temp1 = JSON.parse(JSON.stringify(el))
-                    temp1.children = []
-                    if (el.children && el.children.length) {
-                        el.children.forEach(item => {
-                            if (permissionsArr.includes(item.meta.code)) {
-                                temp1.children.push(item)
-                            }
-                        })
-                    }
-                    temp.push(temp1)
+            if (el.meta && el.meta.code && permissionsArr.indexOf(el.meta.code) !== -1) {
+                const temp1 = JSON.parse(JSON.stringify(el))
+                temp1.children = []
+                if (el.children && el.children.length) {
+                    el.children.forEach(item => {
+                        if (item.meta && item.meta.code && permissionsArr.indexOf(item.meta.code) !== -1) {
+                            temp1.children.push(item)
+                        }
+                    })
                 }
+                temp.push(temp1)
             }
         })
         state.menu = temp
-
-
-        // console.log(permissionsArr, "===permissionsArr===", temp)
     },
     clearMenu(state) {
-        console.log('clear store ...')
         state.menu = []
     },
 }

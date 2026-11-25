@@ -6,6 +6,7 @@
         :limit="1"
         :file-list="fileList"
         :http-request="uploadSectionFile"
+        :before-upload="beforeUpload"
         :on-exceed="onExceed"
         :on-remove="onRemove"
         list-type="picture-card"
@@ -66,6 +67,24 @@ export default {
         }
     },
     methods: {
+        getFileExt(file) {
+            const match = String(file.name || '').match(/\.([a-zA-Z0-9]+)$/)
+            return match ? match[1].toLowerCase() : ''
+        },
+        beforeUpload(file) {
+            const allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp']
+            const ext = this.getFileExt(file)
+            const isImage = /^image\/(jpeg|png|gif|webp|bmp)$/.test(file.type)
+            if (!isImage || allowed.indexOf(ext) === -1) {
+                this.$message.error('仅支持 jpg、png、gif、webp、bmp 图片')
+                return false
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                this.$message.error('图片大小不能超过 5MB')
+                return false
+            }
+            return true
+        },
        onExceed(files, fileList) {
             if (this.limit < 2) {
                 this.$message.info('图片只能上传一张')
@@ -103,7 +122,7 @@ export default {
             //注意formData里append添加的键的大小写
             formData.append('x-oss-forbid-overwrite', true)
 
-            let filePath = this.aliyunOssToken.dir + filename + '.' + file.name.match(/[^\.]\w*$/g)[0]
+            let filePath = this.aliyunOssToken.dir + filename + '.' + this.getFileExt(file)
 
             formData.append('key', filePath); //存储在oss的文件路径
             formData.append('OSSAccessKeyId', this.aliyunOssToken.accessid); //accessKeyId

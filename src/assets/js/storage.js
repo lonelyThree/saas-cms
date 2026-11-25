@@ -8,7 +8,12 @@ var storage = {
         return JSON.parse(i)
     },
     get(k) {
-        return JSON.parse(STORAGE_OBJ.getItem(k)) // null
+        try {
+            return JSON.parse(STORAGE_OBJ.getItem(k)) // null
+        } catch (e) {
+            STORAGE_OBJ.removeItem(k)
+            return null
+        }
     },
     set(k, v) {
         if (typeof v == 'undefined' || !v) {

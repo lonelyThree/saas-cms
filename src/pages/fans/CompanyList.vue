@@ -283,13 +283,13 @@ export default {
       // console.log("submitEditForm", this.popParams, this.selStoreEditOptions)
     },
     editClick(item) {
-      this.popParams = item
+      this.popParams = Object.assign({}, item)
       this.popTitle = '编辑公司【' + item.name + '】'
       this.showEditPopFlag = true
 
     },
     subListClick(item) {
-      this.popParams = item
+      this.popParams = Object.assign({}, item)
       this.popTitle = '业务员公司【' + item.name + '】部门列表'
       this.showType = 2
 

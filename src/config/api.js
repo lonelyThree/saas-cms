@@ -115,7 +115,6 @@ var API = {
     receiptAddress: domain + 'ReceiptAddress',
     receiptWarehouse: domain + 'ReceiptWarehouse',
     receiptWarehouseIn: domain + 'ReceiptWarehouseIn',
-    receiptWarehouseIn: domain + 'ReceiptWarehouseIn',
     receiptEditTime: domain + 'ReceiptEditTime',
 
 

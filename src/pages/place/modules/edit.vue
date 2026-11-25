@@ -86,12 +86,17 @@ export default {
 
         };
     },
+    watch: {
+        editPopParams(val) {
+            this.popParams = Object.assign({}, val || {})
+        },
+    },
     created() {
-        this.popParams = this.editPopParams
+        this.popParams = Object.assign({}, this.editPopParams || {})
     },
     methods: {
         backListClick() {
-            this.$emit('backList', this.ruleForm)
+            this.$emit('backList', this.popParams)
         },
         updateOssToken(obj) {
             this.aliyunOssToken = obj

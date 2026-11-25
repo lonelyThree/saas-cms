@@ -164,7 +164,7 @@
   </div>
     <companyEdit
            @backList="BackList"
-           :popParams="popParams"
+           :sourceParams="popParams"
            :popTitle="popTitle"
            :incomePlaceList="incomePlaceList"
            :fileList="fileList"

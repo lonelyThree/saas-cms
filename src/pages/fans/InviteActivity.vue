@@ -341,9 +341,10 @@ export default {
     },
     editClick(row) {
         this.popTitle = "编辑【推广邀请】活动【"+(this.placeMap[row.place_id]?this.placeMap[row.place_id]:'渠道')+"】【"+row.title+"】"
-        this.popParams = row
-        this.popParams.guide_imgs = row.guide_imgs.trim(',').split(',')
-        this.popParams.customer_cards = row.customer_cards.trim(',').split(',')
+        this.popParams = Object.assign({}, row, {
+          guide_imgs: row.guide_imgs.trim(',').split(','),
+          customer_cards: row.customer_cards.trim(',').split(','),
+        })
         this.showType = 2
     },
 

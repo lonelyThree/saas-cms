@@ -150,8 +150,8 @@
         :width="item.width" :prop="item.key">
         <template slot-scope="scope">
           <img width="60" :src="scope.row.avatar" alt="pic" v-if="item.key == 'avatar'" />
-           <span v-else-if="item.key == 'last_login_at'"> {{ scope.row.last_login_at * 1000, 3 | dateFormatFilter }}</span>
-           <span v-else-if="item.key == 'reg_at'"> {{ scope.row.reg_at * 1000, 3 | dateFormatFilter }}</span>
+           <span v-else-if="item.key == 'last_login_at'"> {{ scope.row.last_login_at * 1000 | dateFormatFilter(3) }}</span>
+           <span v-else-if="item.key == 'reg_at'"> {{ scope.row.reg_at * 1000 | dateFormatFilter(3) }}</span>
 
           <span v-else-if="item.key == 'status'">
             {{ statusMap[scope.row['status']] ? statusMap[scope.row['status']] : '未知' }}
@@ -591,7 +591,7 @@ export default {
       // console.log("submitEditForm", this.popParams, this.selStoreEditOptions)
     },
     editlick(item) {
-      this.popParams = item
+      this.popParams = Object.assign({}, item)
       let selStoreEditOptions = [];
       let storeAdcode = item.store_adcode;
       if(storeAdcode / 10000 > 0) {
@@ -694,9 +694,8 @@ export default {
 
     },
     reviewClick(item) {
-      this.popParams = item
-      let imgList = item.auth_imgs.split(',')
-      this.popParams.imgList = imgList
+      const imgList = item.auth_imgs.split(',')
+      this.popParams = Object.assign({}, item, { imgList })
       this.popReviewParams.openid = item.openid
       this.popReviewParams.opType = 0
       this.popReviewParams.reason = ''

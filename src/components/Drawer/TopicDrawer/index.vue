@@ -32,7 +32,7 @@
         <!-- type=4：案例描述（支持HTML） -->
         <div v-else-if="item.type == 4">
           <div class="desc-title">{{ item.title || '--' }}</div>
-          <div class="vote-user-desc" v-html="item.answer || '--'"></div>
+          <div class="vote-user-desc" v-html="sanitizeHtml(item.answer) || '--'"></div>
         </div>
 
         <div v-else-if="item.type == 5">
@@ -90,6 +90,8 @@
 </template>
 
 <script>
+import { sanitizeHtml as sanitizeRichText } from '@/utils/validate'
+
 export default {
   name: 'TopicDrawer',
   props: {
@@ -121,6 +123,9 @@ export default {
     },
   },
   methods: {
+    sanitizeHtml(html) {
+      return sanitizeRichText(html)
+    },
     closeDrawer() {
       this.$emit('closeDrawer');
     },

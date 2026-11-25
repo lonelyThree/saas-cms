@@ -19,6 +19,20 @@ import ActivitySalesMan from './router-activity-sales-man'
 
 import Fans from './router-fans'
 
+function getPermissionCodes() {
+    const user = storage.get('PE_USER_INFO')
+    const menuList = user && user.menuList
+    if (Array.isArray(menuList)) return menuList
+    if (typeof menuList === 'string') return menuList.split('|')
+    return []
+}
+
+function isAuthorized(to) {
+    const code = to.meta && to.meta.code
+    if (!code || code === 'index') return true
+    return getPermissionCodes().indexOf(code) !== -1
+}
+
 export var appRouter = [
     // {
     //     path: '/demo',
@@ -62,26 +76,32 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-    console.info('router---router' , to, from)
-    // PE: pharmacy enterprise
-    if (storage.get('PE_USER_INFO')) {
-        if (to.name == 'Login') {
-            
-            console.info('has login')
-            next({ name: 'Index' })
-        } else {
-            next()
-        }
-    } else {
-        if (to.name == 'Login') {
+    if (to.meta.title) document.title = '药企营销管理系统 - ' + to.meta.title
+
+    const user = storage.get('PE_USER_INFO')
+    if (!user) {
+        if (to.name === 'Login') {
             next()
         } else {
             next({ name: 'Login' })
         }
+        return
     }
-    if (to.meta.title) document.title = '药企营销管理系统 - ' + to.meta.title
+    if (to.name === 'Login') {
+        next({ name: 'Index' })
+        return
+    }
+    if (!isAuthorized(to)) {
+        next({ name: 'Index' })
+        return
+    }
+    next()
 })
+
+let reloadAttempts = 0
 router.onError(() => {
-  location.reload()
+    if (reloadAttempts >= 1) return
+    reloadAttempts += 1
+    window.location.reload()
 })
 export default router

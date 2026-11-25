@@ -7,6 +7,7 @@
                 :limit="limitNum"
                 :file-list="imgUrlList"
                 :http-request="uploadSectionFile"
+                :before-upload="beforeUpload"
                 :on-exceed="onExceed"
                 :on-remove="onRemove"
                 :on-change = "onChange"
@@ -74,7 +75,14 @@ export default {
     data() {
         return {
             aliyunOssToken:{},
-            imgUrlList:[]
+            imgUrlList:[],
+            sortable: null
+        }
+    },
+    beforeDestroy() {
+        if (this.sortable) {
+            this.sortable.destroy()
+            this.sortable = null
         }
     },
     mounted() {
@@ -102,10 +110,33 @@ export default {
         this.initDragSort();
     },
     methods: {
+        getFileExt(file) {
+            const match = String(file.name || '').match(/\.([a-zA-Z0-9]+)$/)
+            return match ? match[1].toLowerCase() : ''
+        },
+        beforeUpload(file) {
+            const allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp']
+            const ext = this.getFileExt(file)
+            const isImage = /^image\/(jpeg|png|gif|webp|bmp)$/.test(file.type)
+            if (!isImage || allowed.indexOf(ext) === -1) {
+                this.$message.error('仅支持 jpg、png、gif、webp、bmp 图片')
+                return false
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                this.$message.error('图片大小不能超过 5MB')
+                return false
+            }
+            return true
+        },
         // 支持拖拽排序
         initDragSort() {
-            const el = this.$refs.ImageChang.$el.querySelectorAll('.el-upload-list')[0];
-            Sortable.create(el, {
+            if (this.sortable) {
+                this.sortable.destroy()
+                this.sortable = null
+            }
+            const el = this.$refs.ImageChang && this.$refs.ImageChang.$el.querySelectorAll('.el-upload-list')[0]
+            if (!el) return
+            this.sortable = Sortable.create(el, {
                 onEnd: ({ oldIndex, newIndex }) => {
                     // 交换位置
                     const arr = this.imgUrlList;
@@ -165,7 +196,7 @@ export default {
             //注意formData里append添加的键的大小写
             formData.append('x-oss-forbid-overwrite', true)
 
-            let filePath = this.aliyunOssToken.dir + filename + '.' + file.name.match(/[^\.]\w*$/g)[0]
+            let filePath = this.aliyunOssToken.dir + filename + '.' + this.getFileExt(file)
 
             formData.append('key', filePath); //存储在oss的文件路径
             formData.append('OSSAccessKeyId', this.aliyunOssToken.accessid); //accessKeyId

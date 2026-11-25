@@ -11,7 +11,7 @@ let valid = {
     },
     //11位手机号
     _limitPhone(i) {
-        var validFormat = /^[1][3,4,5,7,8,9][0-9]{9}$/;
+        var validFormat = /^1[3-9]\d{9}$/;
         return validFormat.test(i);
     },
     //2-20字，支持中英文数字
@@ -37,12 +37,12 @@ let valid = {
 
     //- 校验url
     checkUrl(textval) {
-        const pathregex = /^(http:\/\/|https:\/\/)+([A-Za-z0-9]+[\s\S]*)$/
+        const pathregex = /^https?:\/\/[^\s]+$/i
         return pathregex.test(textval)
     },
     //大写3数字3
     A3N3(i) {
-        var validFormat = /^[A-z]{3}\d{3}$/;
+        var validFormat = /^[A-Z]{3}\d{3}$/;
         return validFormat.test(i);
     },
 

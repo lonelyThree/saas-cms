@@ -322,25 +322,12 @@ export default {
       this.popParams.logo = ''
     },
     uploadSectionFile(param) {
-        const file = param.file
-        const form = new FormData()
-        // 文件对象
-        form.append('type', '1')
-        form.append('file', file)
-        this.$http.post(API.upload,form).then((res) => {
-          if (res.status === 200) {
-            this.$message({
-              type: 'success',
-              message: '上传成功！'
-            })
-            this.popParams.logo = res.url
-          }else {
-            this.$message.error(res.message)
-          }
-        })
-          const prom = new Promise((resolve, reject) => {})
-              prom.abort = () => {}
-              return prom
+      return this.$http.uploadImage(param.file).then(url => {
+        this.$message.success('上传成功！')
+        this.popParams.logo = url
+      }).catch(err => {
+        this.$message.error(err && err.message ? err.message : '上传失败')
+      })
       },
     changeEye(row,i){
       if(row.eyeOpen){

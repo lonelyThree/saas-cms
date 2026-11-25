@@ -48,24 +48,24 @@
             <el-menu-item
               class="leaf-menu-item"
               v-if="el.leaf"
-              :key="index"
+              :key="'menu-' + index"
               :index="'/' + el.children[0].path"
             >
               <i :class="el.icon"></i>
               <span slot="title">{{ el.children[0].meta.title }}</span>
             </el-menu-item>
-            <el-submenu v-else :index="el.path" :key="index">
+            <el-submenu v-else :index="el.path" :key="'submenu-' + index">
               <template slot="title">
                 <i :class="el.icon"></i>
                 <span slot="title">{{ el.meta.title }}</span>
               </template>
-              <template v-for="(child, childIndex) in el.children">
-                <span :key="childIndex">
-                  <el-menu-item :index="el.path + '/' + child.path">
-                    {{ child.meta.title }}
-                  </el-menu-item>
-                </span>
-              </template>
+              <el-menu-item
+                v-for="(child, childIndex) in el.children"
+                :key="childIndex"
+                :index="el.path + '/' + child.path"
+              >
+                {{ child.meta.title }}
+              </el-menu-item>
             </el-submenu>
           </template>
           <el-menu-item v-if="menuList.length == 0">
@@ -157,7 +157,7 @@ export default {
   },
   data() {
     return {
-      nickname: this.$storage.get('PE_USER_INFO').info.currentLoginName || '',
+      nickname: (((this.$storage.get('PE_USER_INFO') || {}).info || {}).currentLoginName) || '',
       collapsed: false,
       showModifyPasswordDialog: false,
       openeds:['/activity', '/system'],
@@ -183,12 +183,19 @@ export default {
         ],
       },
       modifyPasswordDialogConfirmBtnLoading: false,
+      logoutTimer: null,
     }
   },
 
   created() {
     // console.log(this.$store.state.menu.menu)
     console.log(this.menuList, this.$route.path)
+  },
+  beforeDestroy() {
+    if (this.logoutTimer) {
+      clearTimeout(this.logoutTimer)
+      this.logoutTimer = null
+    }
   },
 
   methods: {
@@ -202,17 +209,24 @@ export default {
       })
         .then(() => {
           var loadingInstance = this.$loading({ fullscreen: true })
-          this.$http.get(API.logout).then(res => {
-            loadingInstance.close()
-            if (res.code == 200) {
-              this.$storage.clear()
-              this.clearMenuList()
-              this.$router.push({ name: 'Login' })
-              this.$message.success('退出登录成功')
-            } else {
-              this.$message.error(res.mag)
-            }
-          })
+          return this.$http
+            .get(API.logout)
+            .then(res => {
+              if (res.code == 200) {
+                this.$storage.remove('PE_USER_INFO')
+                this.clearMenuList()
+                this.$router.push({ name: 'Login' })
+                this.$message.success('退出登录成功')
+              } else {
+                this.$message.error(res.msg || res.message || '退出失败')
+              }
+            })
+            .catch(() => {
+              this.$message.error('退出请求失败，请稍后重试')
+            })
+            .then(() => {
+              loadingInstance.close()
+            })
         })
         .catch(() => {})
     },
@@ -234,22 +248,20 @@ export default {
               if (res.code == 200) {
                 this.$message.success('修改密码成功， 请重新登录')
                 this.cancelModifyPassword()
-                setTimeout(() => {
-                  this.$storage.clear()
+                if (this.logoutTimer) clearTimeout(this.logoutTimer)
+                this.logoutTimer = setTimeout(() => {
+                  this.logoutTimer = null
+                  this.$storage.remove('PE_USER_INFO')
                   this.clearMenuList()
                   this.$router.push({ name: 'Login' })
-                }, 500);
+                }, 500)
               } else {
-                this.$message.error(res.msg)
+                this.$message.error(res.msg || res.message || '修改密码失败')
               }
             })
         } else {
-          for (var i in object) {
-            // console.log(i, object[i], "for")
-            this.$message.error(object[i][0].message)
-            return false
-          }
-          return false;
+          this.$message.error('请检查表单填写是否正确')
+          return false
         }
       })
     },

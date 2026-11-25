@@ -334,14 +334,15 @@ export default {
 
     },
     editClick(row) {
-      this.popParams = row
-      this.popParams.name = row.Chain.name
-      this.popParams.chainId = row.chain_id
+      this.popParams = Object.assign({}, row, {
+        name: row.Chain.name,
+        chainId: row.chain_id,
+      })
       this.popPopTitle = '编辑连锁'
       this.showPopFlag = true
     },
     backListClick() {
-      this.$emit('backList', this.ruleForm)
+      this.$emit('backList', this.popParams)
     },
     handleCurrentChange(page) {
       this.listQuery.page = page

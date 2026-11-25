@@ -34,7 +34,7 @@ export function dateFormatFilter() {
     if (tm == null || tm === '' || tm === 0 || Number.isNaN(tm)) {
         return '--'
     }
-    return dateFormat(tm, arguments[0] || 3)
+    return dateFormat(tm, arguments[1] || 3)
 }
     
 /*获取时间格式数据*/

@@ -40,7 +40,10 @@ export default {
     }
   },
   mounted() {
-    window.addEventListener("keydown", this.handleKeyDown, true); //开启监听键盘按下事件
+    window.addEventListener('keydown', this.handleKeyDown, true)
+  },
+  beforeDestroy() {
+    window.removeEventListener('keydown', this.handleKeyDown, true)
   },
   methods: {
     handleKeyDown(e){
@@ -65,28 +68,35 @@ export default {
           password: this.password,
         })
         .then(res => {
-          console.log("GetMenuList", API.login, res)
-          if (res.code == 200) {
-            this.$storage.set('PE_USER_INFO', res.data)
-            this.GetMenuList()
-          } else {
+          if (res.code != 200) {
             this.loginLoading = false
-            this.$message.error(res.msg)
+            this.$message.error(res.msg || res.message || '登录失败')
+            return
           }
+          this.$http
+            .get(API.getMenuList)
+            .then(menuRes => {
+              this.loginLoading = false
+              if (menuRes.code != 200) {
+                this.$message.error(menuRes.msg || menuRes.message || '获取菜单失败')
+                return
+              }
+              const userInfo = Object.assign({}, res.data, {
+                menuList: Array.isArray(menuRes.data) ? menuRes.data : [],
+              })
+              this.$storage.set('PE_USER_INFO', userInfo)
+              this.$store.dispatch('setMenuList')
+              this.$router.push({ name: 'Index' })
+            })
+            .catch(() => {
+              this.loginLoading = false
+              this.$message.error('获取菜单失败，请稍后重试')
+            })
         })
-    },
-    GetMenuList() {
-      // console.log("GetMenuList", API.getMenuList)
-      this.$http.get(API.getMenuList).then(res => {
-        this.loginLoading = false
-        if (res.code == 200) {
-          this.$storage.concat('PE_USER_INFO', { menuList: res.data })
-          this.$store.dispatch('setMenuList')
-          this.$router.push({ name: 'Index' })
-        } else {
-          this.$message.error(res.message)
-        }
-      })
+        .catch(() => {
+          this.loginLoading = false
+          this.$message.error('登录请求失败，请稍后重试')
+        })
     },
   },
 }

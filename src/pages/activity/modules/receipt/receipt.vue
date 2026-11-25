@@ -92,7 +92,7 @@
 
           <span v-else-if="item.key == 'chainName'">{{ chainMap[scope.row.chain_id] }}</span>
 
-          <span v-else-if="item.key == 'create_at'">{{ scope.row.create_at * 1000, 3 | dateFormat }}</span>
+          <span v-else-if="item.key == 'create_at'">{{ scope.row.create_at * 1000 | dateFormat(3) }}</span>
 
           <span v-else>{{ scope.row[item.key] }}</span>
         </template>
@@ -545,7 +545,17 @@ export default {
       })
     },
     showImgClick(row) {
-      window.open(row.img)
+      try {
+        const url = new URL(row.img, window.location.origin)
+        if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+          this.$message.error('图片地址无效')
+          return
+        }
+        const win = window.open(url.href, '_blank', 'noopener,noreferrer')
+        if (win) win.opener = null
+      } catch (e) {
+        this.$message.error('图片地址无效')
+      }
     },
     submitReviewForm(formName) {
       this.popReviewParams.receiptId = this.receiptId

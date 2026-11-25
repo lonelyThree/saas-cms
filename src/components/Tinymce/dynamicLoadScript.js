@@ -36,11 +36,15 @@ const dynamicLoadScript = (src, callback) => {
       for (const cb of callbacks) {
         cb(null, script)
       }
-      callbacks = null
+      callbacks = []
     }
     script.onerror = function() {
       this.onerror = this.onload = null
-      cb(new Error('Failed to load ' + src), script)
+      const error = new Error('Failed to load ' + src)
+      for (const pending of callbacks) {
+        pending(error, script)
+      }
+      callbacks = []
     }
   }
 
@@ -51,7 +55,7 @@ const dynamicLoadScript = (src, callback) => {
       for (const cb of callbacks) {
         cb(null, script) // there is no way to catch loading errors in IE8
       }
-      callbacks = null
+      callbacks = []
     }
   }
 }

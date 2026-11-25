@@ -379,6 +379,10 @@ export default {
         this.$set(row, 'eyeOpen', false)
         row.email = this.copyList[i].email
       } else {
+        if (!API.getUserEmail) {
+          this.$message.error('查看邮箱接口未配置')
+          return
+        }
         this.$http.post(API.getUserEmail, { id: row.profileId }).then(res => {
           if (res.status == 200) {
             this.$set(row, 'eyeOpen', true)

@@ -155,6 +155,10 @@ export default {
       }
     },
     getEmail(profileId){
+      if (!API.getUserEmail) {
+        this.$message.error('查看邮箱接口未配置')
+        return
+      }
       this.$http.post(API.getUserEmail, { id: profileId }).then(res => {
         if (res.status == 200) {
           this.userForm.email = res.data.email
@@ -166,6 +170,10 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(async (valid, object) => {
         if (valid) {
+          if (!API.setPwd) {
+            this.$message.error('重置密码接口未配置')
+            return
+          }
           this.submitLoading = true
           this.$http.post(API.setPwd, this.userForm).then(res => {
             const { status } = res

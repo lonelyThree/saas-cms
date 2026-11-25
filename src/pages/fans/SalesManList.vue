@@ -96,8 +96,8 @@
         <template slot-scope="scope">
           <img width="60" :src="scope.row.avatar" alt="pic" v-if="item.key == 'avatar'" />
 
-           <span v-else-if="item.key == 'last_login_at'"> {{ scope.row.last_login_at * 1000, 3 | dateFormatFilter }}</span>
-           <span v-else-if="item.key == 'reg_at'"> {{ scope.row.reg_at * 1000, 3 | dateFormatFilter }}</span>
+           <span v-else-if="item.key == 'last_login_at'"> {{ scope.row.last_login_at * 1000 | dateFormatFilter(3) }}</span>
+           <span v-else-if="item.key == 'reg_at'"> {{ scope.row.reg_at * 1000 | dateFormatFilter(3) }}</span>
 
 
           <span v-else-if="item.key == 'status'">
@@ -334,7 +334,7 @@ export default {
     },
 
     reviewClick(item) {
-      this.popParams = item
+      this.popParams = Object.assign({}, item)
       this.popReviewParams.openid = item.openid
       this.popReviewParams.opType = 0
       this.popReviewParams.reason = ''

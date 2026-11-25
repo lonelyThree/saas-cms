@@ -194,6 +194,10 @@ export default {
       return newArr
     },
     loadRoleResource(id) {
+      if (!API.getPermissionList) {
+        this.$message.error('权限列表接口未配置')
+        return
+      }
       this.$http.get(API.getPermissionList, { roleId: id }).then(res => {
         const { status, data } = res
         if (status == 200 && data.trees && Array.isArray(data.trees)) {
@@ -210,6 +214,10 @@ export default {
       })
     },
     handleSave() {
+      if (!API.roleBindPermission) {
+        this.$message.error('权限保存接口未配置')
+        return
+      }
       this.showResourceLoading = true
       let params = {
         roleId: this.roleId,

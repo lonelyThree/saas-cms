@@ -524,7 +524,7 @@ export default {
         this.topicDrawer.loading = false
       }) .catch(err => {
         // 5️⃣ 区分主动取消和真正的网络错误
-        if (axios.isCancel(err) || (err && err.code === 'ERR_CANCELED')) {
+        if (err && (err.code === 'ERR_CANCELED' || err.name === 'CanceledError')) {
           // 主动取消的请求，什么都不做，静默处理
           return;
         }

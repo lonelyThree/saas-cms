@@ -116,12 +116,6 @@ export default {
     // this.imgBase = config.pathUrl([env]).baseImgUrl
     this.init()
   },
-  created() {
-    console.log('created')
-    if (window.tinymce) {
-      this.initTinymce()
-    }
-  },
   deactivated() {
     this.destroyTinymce()
   },
@@ -198,74 +192,54 @@ export default {
         //   }, 0);
         //   return img
         // },
-        images_upload_handler(blobInfo, success, failure, progress) {
-          console.log('images upload handler')
-          console.log(blobInfo.blob())
-          const isLt2M = blobInfo.blob().size / 1024 / 1024 < 2
-          if (!isLt2M) {
-            this.$message({
-              message: '上传图片大小不能超过 2M!',
-              type: 'warning',
-            })
-            return false
-          } else {
-            var formData = new FormData()
-            formData.append('file', blobInfo.blob())
-            formData.append('type', 9)
-            _this.$http.post(API.upload, formData).then(res => {
-              const { status, url } = res
-              if (status && status == 200) {
-                success(url)
-              } else {
-                this.$message.error(res.msg)
-              }
-            })
+        images_upload_handler(blobInfo, success, failure) {
+          const file = blobInfo.blob()
+          if (file.size > 2 * 1024 * 1024) {
+            _this.$message.warning('上传图片大小不能超过 2M')
+            failure('上传图片大小不能超过 2M')
+            return
           }
-
-          // progress(0);
-          // const token = _this.$store.getters.token;
-          // getToken(token).then(response => {
-          //   const url = response.data.qiniu_url;
-          //   const formData = new FormData();
-          //   formData.append('token', response.data.qiniu_token);
-          //   formData.append('key', response.data.qiniu_key);
-          //   formData.append('file', blobInfo.blob(), url);
-
-          //   // upload(formData).then(() => {
-          //   //   success(url);
-          //   //   progress(100);
-          //   // })
-          // }).catch(err => {
-          //   failure('出现未知问题，刷新页面，或者联系程序员')
-          //   console.log(err);
-          // });
+          _this.uploadImageToOss(file).then(success).catch(err => {
+            _this.$message.error(err && err.message ? err.message : '图片上传失败')
+            failure(err && err.message ? err.message : '图片上传失败')
+          })
         },
       })
     },
+    uploadImageToOss(file) {
+      return this.$http.uploadImage(file)
+    },
     destroyTinymce() {
-      console.log('destroy')
+      if (!window.tinymce || !window.tinymce.get) return
       const tinymce = window.tinymce.get(this.tinymceId)
+      if (!tinymce) return
       if (this.fullscreen) {
         tinymce.execCommand('mceFullScreen')
       }
-
-      if (tinymce) {
-        tinymce.destroy()
-      }
+      tinymce.destroy()
     },
     setContent(value) {
-      console.log(value)
+      if (!window.tinymce || !window.tinymce.get(this.tinymceId)) return
       window.tinymce.get(this.tinymceId).setContent(value)
     },
     getContent() {
-      window.tinymce.get(this.tinymceId).getContent()
+      const editor = window.tinymce && window.tinymce.get && window.tinymce.get(this.tinymceId)
+      return editor ? editor.getContent() : ''
     },
     imageSuccessCBK(arr) {
-      arr.forEach(v =>
-        window.tinymce
-          .get(this.tinymceId)
-          .insertContent(`<img class="wscnph" src="${v.url}" >`)
-      )
+      const editor = window.tinymce && window.tinymce.get && window.tinymce.get(this.tinymceId)
+      if (!editor) return
+      arr.forEach(v => {
+        let url = String(v.url || '')
+        try {
+          const parsed = new URL(url, window.location.origin)
+          if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return
+          url = parsed.href.replace(/"/g, '&quot;').replace(/'/g, '&#39;')
+        } catch (e) {
+          return
+        }
+        editor.insertContent(`<img class="wscnph" src="${url}" >`)
+      })
     },
   },
 }

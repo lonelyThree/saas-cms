@@ -136,6 +136,11 @@ export default {
         if (valid) {
           this.submitLoading = true
           if(this.isEdit) {
+            if (!API.editRole) {
+              this.submitLoading = false
+              this.$message.error('角色编辑接口未配置')
+              return
+            }
             this.$http.post(API.editRole, this.roleForm).then(res => {
               const { status } = res
               if (status && status == 200) {
@@ -150,6 +155,11 @@ export default {
               this.submitLoading = false
             })
           } else {
+            if (!API.addRole) {
+              this.submitLoading = false
+              this.$message.error('角色创建接口未配置')
+              return
+            }
             this.$http.post(API.addRole, this.roleForm).then(res => {
               const { status } = res
               if (status && status == 200) {
