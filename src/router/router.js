@@ -98,19 +98,32 @@ router.beforeEach((to, from, next) => {
     next()
 })
 
+const RELOAD_KEY = 'cms_router_reload_count'
+
+router.afterEach(() => {
+    try {
+        window.sessionStorage.removeItem(RELOAD_KEY)
+    } catch (e) {
+        // ignore storage errors
+    }
+})
+
 router.onError(error => {
     const isChunkError = error && (
         error.name === 'ChunkLoadError' ||
         /Loading chunk .* failed/.test(error.message || '')
     )
     if (!isChunkError) return
-    const reloadKey = 'cms_router_reload_count'
-    const count = Number(window.sessionStorage.getItem(reloadKey) || 0)
-    if (count >= 1) {
-        window.sessionStorage.removeItem(reloadKey)
+    try {
+        const count = Number(window.sessionStorage.getItem(RELOAD_KEY) || 0)
+        if (count >= 1) {
+            window.sessionStorage.removeItem(RELOAD_KEY)
+            return
+        }
+        window.sessionStorage.setItem(RELOAD_KEY, String(count + 1))
+    } catch (e) {
         return
     }
-    window.sessionStorage.setItem(reloadKey, String(count + 1))
     window.location.reload()
 })
 export default router

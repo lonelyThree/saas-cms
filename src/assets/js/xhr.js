@@ -33,7 +33,7 @@ function normalizeError(error) {
     }
     const response = error && error.response
     const status = response && response.status
-    if (status === 401) {
+    if (status === 401 && error && error.config && isApiRequest(error.config)) {
         clearSession()
     }
     const data = response && response.data
